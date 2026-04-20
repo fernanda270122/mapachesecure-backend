@@ -1,22 +1,8 @@
-from fastapi import FastAPI
-from dotenv import load_dotenv
-from app.routers import usuarios, desafios, recompensas
+from fastapi import APIRouter
 
-load_dotenv()
+router = APIRouter(prefix="/ia", tags=["IA"])
 
-app = FastAPI(
-    title="MapacheSecure API",
-    description="Backend para el sistema de autorregulacion digital MapacheSecure",
-    version="1.0.0"
-)
 
-app.include_router(usuarios.router)
-app.include_router(desafios.router)
-app.include_router(recompensas.router)
-
-@app.get("/")
-def root():
-    return {
-        "mensaje": "MapacheSecure API funcionando correctamente",
-        "version": "1.0.0"
-    }
+@router.get("/")
+def ia_status():
+    return {"mensaje": "Módulo de IA MapacheSecure - próximamente"}

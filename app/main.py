@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from dotenv import load_dotenv
-from app.routers import usuarios, desafios, recompensas, apps, auth
+from app.routers import usuarios, desafios, recompensas, apps, auth, ia
 
 load_dotenv()
 
@@ -16,6 +16,7 @@ app.include_router(desafios.router)
 app.include_router(recompensas.router)
 app.include_router(apps.router)
 app.include_router(auth.router)
+app.include_router(ia.router)
 
 @app.get("/")
 def root():

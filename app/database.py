@@ -10,7 +10,5 @@ load_dotenv(dotenv_path=env_path)
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
-print("URL:", SUPABASE_URL)  # Para verificar
-print("KEY:", SUPABASE_KEY)  # Para verificar
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
