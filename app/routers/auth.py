@@ -1,6 +1,7 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from app.services import auth_service
+from app.dependencies import get_current_user
 
 router = APIRouter(prefix="/auth", tags=["Autenticacion"])
 
@@ -24,10 +25,10 @@ def registro(data: RegistroRequest):
 def login(data: LoginRequest):
     return auth_service.login(data)
 
-@router.post("/logout")
+@router.post("/logout", dependencies=[Depends(get_current_user)])
 def logout():
     return auth_service.logout()
 
-@router.put("/vincular-hijo")
+@router.put("/vincular-hijo", dependencies=[Depends(get_current_user)])
 def vincular_hijo(hijo_id: str, padre_id: str):
     return auth_service.vincular_hijo(hijo_id, padre_id)
