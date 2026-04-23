@@ -58,3 +58,30 @@ def vincular_hijo(hijo_id: str, padre_id: str):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+def registro_hijo(data, padre_id: str):
+    try:
+        auth_response = auth_repo.sign_up(data.email, data.password)
+        if not auth_response.user:
+            raise HTTPException(status_code=400, detail="Error al crear cuenta del hijo")
+
+        perfil = {
+            "id": auth_response.user.id,
+            "email": data.email,
+            "nombre": data.nombre,
+            "rol": "hijo",
+            "padre_id": padre_id,
+            "edad": data.edad
+        }
+        auth_repo.create_perfil(perfil)
+
+        return {
+            "mensaje": "Hijo registrado exitosamente",
+            "user_id": auth_response.user.id,
+            "nombre": data.nombre,
+            "padre_id": padre_id
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
