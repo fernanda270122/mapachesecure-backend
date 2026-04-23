@@ -28,3 +28,14 @@ def eliminar_app_bloqueada(app_id: str):
 @router.get("/verificar/{hijo_id}/{package_name}", dependencies=[Depends(get_current_user)])
 def verificar_app(hijo_id: str, package_name: str):
     return apps_service.verificar_app(hijo_id, package_name)
+
+class ReporteUsoRequest(BaseModel):                                                                                                                                                             
+    hijo_id: str
+    minutos: int                                                                                                                                                                          
+@router.post("/reporte-uso", dependencies=[Depends(get_current_user)])
+def reportar_uso(data: ReporteUsoRequest):
+    return apps_service.reportar_uso(data.hijo_id, data.minutos)
+
+@router.get("/estado/{hijo_id}", dependencies=[Depends(get_current_user)])
+def obtener_estado(hijo_id: str):
+    return apps_service.obtener_estado(hijo_id)

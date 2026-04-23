@@ -31,3 +31,11 @@ def obtener_hijos(padre_id: str):
         return usuarios_repo.get_hijos(padre_id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+def configurar_hijo(hijo_id: str, config):
+    try:
+        datos = {"tiempo_limite_minutos": config.tiempo_limite_minutos}
+        result = usuarios_repo.update(hijo_id, datos)
+        return {"mensaje": "Configuración actualizada", "data": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

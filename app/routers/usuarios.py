@@ -30,3 +30,10 @@ def crear_usuario(usuario: UsuarioCrear):
 @router.get("/{padre_id}/hijos", dependencies=[Depends(get_current_user)])
 def obtener_hijos(padre_id: str):
     return usuarios_service.obtener_hijos(padre_id)
+
+class ConfiguracionHijo(BaseModel):                                                                                                                                                             
+    tiempo_limite_minutos: int
+    
+@router.put("/{hijo_id}/configuracion", dependencies=[Depends(get_current_user)])
+def configurar_hijo(hijo_id: str, config: ConfiguracionHijo):
+    return usuarios_service.configurar_hijo(hijo_id, config)
