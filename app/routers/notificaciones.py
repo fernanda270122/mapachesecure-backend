@@ -1,23 +1,29 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from app.services import notificaciones_service
-from app.dependencies import get_current_user
+from app.services.ia_service import generar_desafios
 
-router = APIRouter(prefix="/notificaciones", tags=["Notificaciones"])
+router = APIRouter(prefix="/ia", tags=["IA"])
 
+class SolicitudDesafios(BaseModel):
+    categoria: str
+    edad: int
+    dificultad: str
+    cantidad: int = 2
 
-class FCMTokenRequest(BaseModel):
-    fcm_token: str
+@router.post("/generar-desafios")
+def generar(solicitud: SolicitudDesafios):
+    categorias_validas = ["cognitiva", "fisica", "hogar"]
+    dificultades_validas = ["facil", "medio", "dificil"]
 
-class NotificacionRequest(BaseModel):
-    hijo_id: str
-    nombre_app: str
+    if solicitud.categoria not in categorias_validas:
+        raise HTTPException(status_code=400, detail=f"Categoría inválida. Usa: {categorias_validas}")
+    if solicitud.dificultad not in dificultades_validas:
+        raise HTTPException(status_code=400, detail=f"Dificultad inválida. Usa: {dificultades_validas}")
 
-
-@router.post("/token")
-def registrar_token(data: FCMTokenRequest, current_user=Depends(get_current_user)):
-    return notificaciones_service.registrar_fcm_token(current_user.id, data.fcm_token)
-
-@router.post("/app-bloqueada")
-def notificar_app_bloqueada(data: NotificacionRequest, current_user=Depends(get_current_user)):
-    return notificaciones_service.enviar_notificacion_padre(data.hijo_id, data.nombre_app)
+    resultado = generar_desafios(
+        categoria=solicitud.categoria,
+        edad=solicitud.edad,
+        dificultad=solicitud.dificultad,
+        cantidad=solicitud.cantidad
+    )
+    return resultado
