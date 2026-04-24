@@ -1,27 +1,38 @@
-from fastapi import APIRouter, Depends, HTTPException                                                                                                                                         
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-from typing import Literal                                                                                                                                                                    
+from typing import Literal, Optional
 from app.dependencies import get_current_user
 from app.services import ia_service
+from app.repositories import usuarios_repo
 
-class GenerarDesafiosRequest(BaseModel):                                                                                                                                                          
+class GenerarDesafiosRequest(BaseModel):
     categoria: Literal["cognitiva", "fisica", "hogar"]
-    edad: int                                                                                                                                                                                     
+    hijo_id: str
     dificultad: Literal["facil", "medio", "dificil"]
-    cantidad: int = 2
+    cantidad: int = 3
 
 router = APIRouter(prefix="/ia", tags=["IA"])
 
 
-@router.post("/generar", dependencies=[Depends(get_current_user)])                                                                                                                            
+@router.post("/generar", dependencies=[Depends(get_current_user)])
 def generar_desafios(data: GenerarDesafiosRequest):
-    try:                                                                                                                                                                                              
+    try:
+        hijo = usuarios_repo.get_by_id(data.hijo_id)
+        if not hijo:
+            raise HTTPException(status_code=404, detail="Hijo no encontrado")
+        hijo = hijo[0]
         resultado = ia_service.generar_desafios(
             categoria=data.categoria,
-            edad=data.edad,
+            edad=hijo.get("edad"),
             dificultad=data.dificultad,
             cantidad=data.cantidad,
+            sexo=hijo.get("sexo"),
+            nivel_escolar=hijo.get("nivel_escolar"),
+            intereses=hijo.get("intereses"),
+            personalidad=hijo.get("personalidad"),
         )
         return resultado
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al generar desafíos: {str(e)}")
