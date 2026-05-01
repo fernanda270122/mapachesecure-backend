@@ -57,7 +57,7 @@ def agregar_al_catalogo(data, padre_id: str):
             "descripcion": data.descripcion,
             "puntos_sugeridos": data.puntos_sugeridos,
             "icono": data.icono,
-            "creado_por": padre_id
+            "creado_por": None
         }
         return recompensas_repo.create_catalogo(nueva_recompensa)
     except Exception as e:
