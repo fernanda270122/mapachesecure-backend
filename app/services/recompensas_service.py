@@ -43,6 +43,25 @@ def canjear_recompensa(data):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+def obtener_catalogo():
+    try:
+        return recompensas_repo.get_catalogo() 
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+def agregar_al_catalogo(data, padre_id: str):
+    try:
+        nueva_recompensa = {
+            "nombre": data.nombre,
+            "descripcion": data.descripcion,
+            "puntos_sugeridos": data.puntos_sugeridos,
+            "icono": data.icono,
+            "creado_por": padre_id
+        }
+        return recompensas_repo.create_catalogo(nueva_recompensa)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))    
 
 def historial_canjes(hijo_id: str):
     try:

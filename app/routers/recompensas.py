@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from app.services import recompensas_service
@@ -16,6 +17,12 @@ class CanjearRecompensa(BaseModel):
     hijo_id: str
     recompensa_id: str
 
+class RecompensaCatalogo(BaseModel):
+    nombre: str
+    descripcion: Optional[str] = None
+    puntos_sugeridos: int
+    icono: str    
+
 
 @router.get("/{hijo_id}", dependencies=[Depends(get_current_user)])
 def obtener_recompensas(hijo_id: str):
@@ -32,3 +39,11 @@ def canjear_recompensa(data: CanjearRecompensa):
 @router.get("/historial/{hijo_id}", dependencies=[Depends(get_current_user)])
 def historial_canjes(hijo_id: str):
     return recompensas_service.historial_canjes(hijo_id)
+
+@router.get("/catalogo", dependencies=[Depends(get_current_user)])
+def obtener_catalogo():
+    return recompensas_service.obtener_catalogo()
+
+@router.post("/catalogo", dependencies=[Depends(get_current_user)])
+def crear_en_catalogo(data: RecompensaCatalogo, user = Depends(get_current_user)):
+    return recompensas_service.agregar_al_catalogo(data, user.id)

@@ -15,3 +15,9 @@ def registrar_canje(datos: dict):
 
 def get_historial_canjes(hijo_id: str):
     return supabase.table("canjes").select("*").eq("hijo_id", hijo_id).execute().data
+
+def get_catalogo():
+    return supabase.table("catalogo_recompensas").select("*").execute().data
+
+def create_catalogo(datos: dict):
+    return supabase.table("catalogo_recompensas").insert(datos).execute().data
