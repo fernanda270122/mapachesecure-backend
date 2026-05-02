@@ -44,3 +44,9 @@ def vincular_hijo(hijo_id: str, padre_id: str):
 @router.post("/registro-hijo", dependencies=[Depends(get_current_user)])
 def registro_hijo(data: RegistroHijoRequest, current_user=Depends(get_current_user)):
     return auth_service.registro_hijo(data, current_user.id)
+
+class RecuperarPasswordRequest(BaseModel):
+    email: str
+@router.post("/recuperar-password")
+def recuperar_password(data: RecuperarPasswordRequest):
+    return auth_service.recuperar_password(data.email)

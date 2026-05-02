@@ -18,3 +18,6 @@ def get_perfil(usuario_id: str):
 
 def vincular_hijo(hijo_id: str, padre_id: str):
     return supabase.table("usuarios").update({"padre_id": padre_id}).eq("id", hijo_id).execute().data
+
+def reset_password(email: str):
+    return supabase.auth.reset_password_for_email(email)

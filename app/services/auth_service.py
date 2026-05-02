@@ -85,3 +85,10 @@ def registro_hijo(data, padre_id: str):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+def recuperar_password(email: str):
+    try:
+        auth_repo.reset_password(email)
+        return{"mensaje": "Correo de recuperación enviado"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=set(e))
