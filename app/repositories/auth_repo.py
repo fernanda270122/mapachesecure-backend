@@ -22,7 +22,7 @@ def vincular_hijo(hijo_id: str, padre_id: str):
 def reset_password(email: str):
     return supabase.auth.reset_password_for_email(
         email,
-        options={"redirect_to": "mapachesecure://reset-password"}
+        {"redirectTo": "mapachesecure://reset-password"}
         )
 def cambiar_password(access_token: str, nueva_password: str):
     return supabase.auth.admin.update_user_by_id(
