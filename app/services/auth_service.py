@@ -92,3 +92,10 @@ def recuperar_password(email: str):
         return{"mensaje": "Correo de recuperación enviado"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=set(e))
+
+def cambiar_password(access_token: str, nueva_password: str):
+    try:
+        auth_repo.cambiar_password(access_token, nueva_password)
+        return {"mensaje": "Contraseña actualizada exitosamente"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

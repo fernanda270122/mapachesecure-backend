@@ -50,3 +50,10 @@ class RecuperarPasswordRequest(BaseModel):
 @router.post("/recuperar-password")
 def recuperar_password(data: RecuperarPasswordRequest):
     return auth_service.recuperar_password(data.email)
+
+class CambiarPasswordRequest(BaseModel):
+    accsess_token: str
+    nueva_password: str
+@router.post("/cambiar-password")
+def cambiar_password(data: CambiarPasswordRequest):
+    return auth_service.cambiar_password(data.accsess_token, data.nueva_password)
