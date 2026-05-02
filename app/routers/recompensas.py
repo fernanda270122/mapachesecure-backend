@@ -32,3 +32,22 @@ def canjear_recompensa(data: CanjearRecompensa):
 @router.get("/historial/{hijo_id}", dependencies=[Depends(get_current_user)])
 def historial_canjes(hijo_id: str):
     return recompensas_service.historial_canjes(hijo_id)
+
+class CatalogoCrear(BaseModel):                                                                                                                                                                 
+    nombre: str
+    descripcion: str = ""
+    puntos_sugeridos: int = 50
+    icono: str = "🎁"
+
+
+@router.get("/catalogo", dependencies=[Depends(get_current_user)])
+def obtener_catalogo():
+    return recompensas_service.obtener_catalogo()
+
+@router.post("/catalogo", dependencies=[Depends(get_current_user)])
+def agregar_al_catalogo(datos: CatalogoCrear, usuario=Depends(get_current_user)):
+    return recompensas_service.agregar_al_catalogo(datos, usuario["id"])
+
+@router.delete("/catalogo/{catalogo_id}", dependencies=[Depends(get_current_user)])
+def eliminar_del_catalogo(catalogo_id: str, usuario=Depends(get_current_user)):
+    return recompensas_service.eliminar_del_catalogo(catalogo_id, usuario["id"])
