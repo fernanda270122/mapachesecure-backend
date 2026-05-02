@@ -20,10 +20,7 @@ def vincular_hijo(hijo_id: str, padre_id: str):
     return supabase.table("usuarios").update({"padre_id": padre_id}).eq("id", hijo_id).execute().data
 
 def reset_password(email: str):
-    return supabase.auth.reset_password_for_email(
-        email,
-        {"redirectTo": "mapachesecure://reset-password"}
-        )
+    return supabase.auth.reset_password_for_email(email)
 def cambiar_password(access_token: str, nueva_password: str):
     return supabase.auth.admin.update_user_by_id(
         supabase.auth.get_user(access_token).user.id,
