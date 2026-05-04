@@ -42,13 +42,13 @@ def canjear_recompensa(data):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
+    
 def historial_canjes(hijo_id: str):
     try:
         return recompensas_repo.get_historial_canjes(hijo_id)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-                                                                                                                                                
+
 def obtener_catalogo():
     try:
         return catalogo_repo.get_all()
