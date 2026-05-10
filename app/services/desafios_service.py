@@ -94,3 +94,18 @@ def obtener_pendientes(padre_id: str):
         return pendientes
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+
+def crear_desafio(data):
+    try:
+        nuevo_desafio = {
+            "titulo": data.titulo,
+            "descripcion": data.descripcion,
+            "puntos": data.puntos,
+            "tipo": data.tipo,
+            "requiere_foto": True,  
+            "hijo_id": data.hijo_id 
+        }
+        return desafios_repo.crear_desafio(nuevo_desafio)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

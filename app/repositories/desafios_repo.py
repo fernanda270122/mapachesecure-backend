@@ -1,7 +1,17 @@
 from app.database import supabase
 
 
-def get_all():
+def get_all(hijo_id: str = None):
+    if hijo_id:
+        # Trae desafíos generales (hijo_id es null) O específicos para este niño
+        return (
+            supabase.table("desafios")
+            .select("*")
+            .or_(f"hijo_id.eq.{hijo_id},hijo_id.is.null")
+            .execute()
+            .data
+        )
+    # Si no hay ID (usado por el admin o padre), trae todo
     return supabase.table("desafios").select("*").execute().data
 
 def get_by_tipo(tipo: str):
@@ -35,3 +45,7 @@ def get_pendientes_hijo(hijo_id: str):
         .execute()
         .data
     )
+
+def crear_desafio(datos: dict):
+    """Inserta un nuevo desafío en la tabla de Supabase"""
+    return supabase.table("desafios").insert(datos).execute().data
