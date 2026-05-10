@@ -1,6 +1,5 @@
 from fastapi import HTTPException
-from app.repositories import recompensas_repo, desafios_repo
-
+from app.repositories import recompensas_repo, desafios_repo, catalogo_repo
 
 def obtener_recompensas(hijo_id: str):
     try:
@@ -44,27 +43,34 @@ def canjear_recompensa(data):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-def obtener_catalogo():
-    try:
-        return recompensas_repo.get_catalogo() 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-def agregar_al_catalogo(data, padre_id: str):
-    try:
-        nueva_recompensa = {
-            "nombre": data.nombre,
-            "descripcion": data.descripcion,
-            "puntos_sugeridos": data.puntos_sugeridos,
-            "icono": data.icono,
-            "creado_por": None
-        }
-        return recompensas_repo.create_catalogo(nueva_recompensa)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))    
-
 def historial_canjes(hijo_id: str):
     try:
         return recompensas_repo.get_historial_canjes(hijo_id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+def obtener_catalogo():
+    try:
+        return catalogo_repo.get_all()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+def agregar_al_catalogo(datos, padre_id: str):
+    try:
+        nuevo = datos.model_dump()
+        nuevo["creado_por"] = padre_id
+        result = catalogo_repo.create(nuevo)
+        return {"mensaje": "Recompensa agregada al catálogo 🎁", "data": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+def eliminar_del_catalogo(catalogo_id: str, padre_id: str):
+    try:
+        result = catalogo_repo.delete(catalogo_id, padre_id)
+        if not result:
+            raise HTTPException(status_code=403, detail="No puedes eliminar esta recompensa")
+        return {"mensaje": "Recompensa eliminada del catálogo"}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
