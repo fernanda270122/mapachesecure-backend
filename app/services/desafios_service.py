@@ -95,4 +95,3 @@ def obtener_pendientes(padre_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
-
