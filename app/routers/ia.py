@@ -39,7 +39,7 @@ def generar_desafios(data: GenerarDesafiosRequest):
                     "titulo": d["titulo"],
                     "descripcion": d["descripcion"],
                     "puntos": d.get("puntos", 50), 
-                    "categoria": data.categoria,
+                    "tipo": data.categoria,
                     "dificultad": data.dificultad,
                     "hijo_id": data.hijo_id,      
                     "estado": "pendiente"          
