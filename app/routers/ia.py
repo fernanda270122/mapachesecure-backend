@@ -35,14 +35,13 @@ def generar_desafios(data: GenerarDesafiosRequest):
         )
         if "desafios" in resultado:
             for d in resultado["desafios"]:
-                supabase.table("desafios").insert({    # Ahora la IA deberia hacer su pega bien al crear el desafio por parte del padre
+                supabase.table("desafios").insert({
                     "titulo": d["titulo"],
                     "descripcion": d["descripcion"],
-                    "puntos": d.get("puntos", 50), 
-                    "categoria": data.categoria,
+                    "puntos": d.get("puntos", 50),
+                    "tipo": data.categoria,
                     "dificultad": data.dificultad,
-                    "hijo_id": data.hijo_id,      
-                    "estado": "pendiente"          
+                    "hijo_id": data.hijo_id,
                 }).execute()
         return resultado
     except HTTPException:
