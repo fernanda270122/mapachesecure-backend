@@ -41,8 +41,7 @@ def generar_desafios(data: GenerarDesafiosRequest):
                     "puntos": d.get("puntos", 50), 
                     "tipo": data.categoria,
                     "dificultad": data.dificultad,
-                    "hijo_id": data.hijo_id,      
-                    "estado": "pendiente"          
+                    "hijo_id": data.hijo_id,                
                 }).execute()
         return resultado
     except HTTPException:
