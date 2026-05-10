@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException                                                                                                                                       
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, List
 from app.dependencies import get_current_user
 from app.database import supabase
 
@@ -11,7 +11,7 @@ class BloqueoCreate(BaseModel):
     tipo: str  # 'inmediato', 'horario', 'calendario'
     hora_inicio: Optional[str] = None
     hora_fin: Optional[str] = None
-    dias_semana: Optional[str] = None
+    dias_semana: Optional[List[int]] = None
     fechas: Optional[str] = None
 
 @router.post("/{hijo_id}")
