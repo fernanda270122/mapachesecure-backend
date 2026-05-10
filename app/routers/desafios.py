@@ -12,13 +12,6 @@ class DesafioCompletar(BaseModel):
     desafio_id: str
     foto_url: Optional[str] = None
 
-class DesafioCreate(BaseModel):
-    titulo: str
-    descripcion: str
-    puntos: int
-    tipo: str
-    hijo_id: str    
-
 
 @router.get("/", dependencies=[Depends(get_current_user)])
 def obtener_desafios():
@@ -47,7 +40,3 @@ def validar_desafio(desafio_completado_id: str, aprobado: bool):
 @router.get("/pendientes/{padre_id}", dependencies=[Depends(get_current_user)])
 def obtener_pendientes(padre_id: str):
     return desafios_service.obtener_pendientes(padre_id)
-
-@router.post("/", dependencies=[Depends(get_current_user)])
-def crear_desafio(data: DesafioCreate):
-    return desafios_service.crear_desafio(data)
