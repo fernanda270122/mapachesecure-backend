@@ -14,7 +14,7 @@ class GenerarDesafiosRequest(BaseModel):
 router = APIRouter(prefix="/ia", tags=["IA"])
 
 
-@router.post("/generar/", dependencies=[Depends(get_current_user)])
+@router.post("/generar", dependencies=[Depends(get_current_user)])
 def generar_desafios(data: GenerarDesafiosRequest):
     try:
         hijo = usuarios_repo.get_by_id(data.hijo_id)
