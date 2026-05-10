@@ -14,23 +14,17 @@ class BloqueoCreate(BaseModel):
     dias_semana: Optional[str] = None
     fechas: Optional[str] = None
 
-@router.post("/{hijo_id}")                                                                                                                                                                  
+@router.post("/{hijo_id}")
 def crear_bloqueo(hijo_id: str, bloqueo: BloqueoCreate, current_user=Depends(get_current_user)):
-# Validar que el bloqueo sea de mínimo 2 horas (solo para horario y calendario)
     if bloqueo.tipo in ("horario", "calendario"):
         if bloqueo.hora_inicio and bloqueo.hora_fin:
             from datetime import datetime
-            # Convertir strings a objetos datetime para comparar
             inicio = datetime.strptime(bloqueo.hora_inicio, "%H:%M")
             fin = datetime.strptime(bloqueo.hora_fin, "%H:%M")
-            # Calcular diferencia en horas
             diferencia = (fin - inicio).seconds / 3600
             if diferencia < 2:
                 raise HTTPException(status_code=400, detail="El bloqueo debe ser de mínimo 2 horas")
 
-# Armar los datos a insertar en Supabase
-@router.post("/{hijo_id}")
-def crear_bloqueo(hijo_id: str, bloqueo: BloqueoCreate, current_user=Depends(get_current_user)):
     data = {
         "hijo_id": hijo_id,
         "tipo": bloqueo.tipo,
