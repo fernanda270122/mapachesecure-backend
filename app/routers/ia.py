@@ -5,6 +5,8 @@ from app.dependencies import get_current_user
 from app.services import ia_service
 from app.repositories import usuarios_repo
 
+from app.database import supabase
+
 class GenerarDesafiosRequest(BaseModel):
     categoria: Literal["cognitiva", "fisica", "hogar"]
     hijo_id: str
@@ -31,6 +33,17 @@ def generar_desafios(data: GenerarDesafiosRequest):
             intereses=hijo.get("intereses"),
             personalidad=hijo.get("personalidad"),
         )
+        if "desafios" in resultado:
+            for d in resultado["desafios"]:
+                supabase.table("desafios").insert({
+                    "titulo": d["titulo"],
+                    "descripcion": d["descripcion"],
+                    "puntos": d.get("puntos", 50), # Puntos que vienen de la IA o 50 por defecto
+                    "categoria": data.categoria,
+                    "dificultad": data.dificultad,
+                    "hijo_id": data.hijo_id,       # El vínculo clave
+                    "estado": "pendiente"          # Para que le aparezca al niño para completar
+                }).execute()
         return resultado
     except HTTPException:
         raise
