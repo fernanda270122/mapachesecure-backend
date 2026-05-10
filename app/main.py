@@ -7,7 +7,7 @@ load_dotenv()
 app = FastAPI(
     title="MapacheSecure API",
     description="Backend para el sistema de autorregulación digital MapacheSecure",
-    version="1.0.3"
+    version="1.0.4"
 )
 
 # Routers
@@ -23,5 +23,5 @@ app.include_router(notificaciones.router)
 def root():
     return {
         "mensaje": "🦝 MapacheSecure API funcionando correctamente",
-        "version": "1.0.3"
+        "version": "1.0.4"
     }
