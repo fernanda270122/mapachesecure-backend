@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from typing import Optional, List
 from app.dependencies import get_current_user
 from app.database import supabase
+import json
 
 router = APIRouter(prefix="/bloqueos", tags=["bloqueos"])
 
@@ -30,7 +31,7 @@ def crear_bloqueo(hijo_id: str, bloqueo: BloqueoCreate, current_user=Depends(get
         "tipo": bloqueo.tipo,
         "hora_inicio": bloqueo.hora_inicio,
         "hora_fin": bloqueo.hora_fin,
-        "dias_semana": bloqueo.dias_semana,
+        "dias_semana": json.dumps(bloqueo.dias_semana) if bloqueo.dias_semana else None,
         "fechas": bloqueo.fechas,
         "activo": True,
     }
