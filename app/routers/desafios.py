@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from typing import Optional
 from app.services import desafios_service
+from app.repositories import desafios_repo
 from app.dependencies import get_current_user
 from fastapi import APIRouter, Depends, HTTPException
 
