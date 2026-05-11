@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from typing import Optional
 from app.services import desafios_service
 from app.dependencies import get_current_user
+from fastapi import APIRouter, Depends, HTTPException
 
 router = APIRouter(prefix="/desafios", tags=["Desafios"])
 
