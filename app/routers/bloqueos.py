@@ -26,17 +26,20 @@ def crear_bloqueo(hijo_id: str, bloqueo: BloqueoCreate, current_user=Depends(get
             if diferencia < 2:
                 raise HTTPException(status_code=400, detail="El bloqueo debe ser de mínimo 2 horas")
 
-    data = {
-        "hijo_id": hijo_id,
-        "tipo": bloqueo.tipo,
-        "hora_inicio": bloqueo.hora_inicio,
-        "hora_fin": bloqueo.hora_fin,
-        "dias_semana": json.dumps(bloqueo.dias_semana) if bloqueo.dias_semana else None,
-        "fechas": bloqueo.fechas,
-        "activo": True,
-    }
-    result = supabase.table("bloqueos_programados").insert(data).execute()
-    return result.data[0]
+    try:
+        data = {
+            "hijo_id": hijo_id,
+            "tipo": bloqueo.tipo,
+            "hora_inicio": bloqueo.hora_inicio,
+            "hora_fin": bloqueo.hora_fin,
+            "dias_semana": json.dumps(bloqueo.dias_semana) if bloqueo.dias_semana else None,
+            "fechas": bloqueo.fechas if bloqueo.fechas else "",
+            "activo": True,
+        }
+        result = supabase.table("bloqueos_programados").insert(data).execute()
+        return result.data[0]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.get("/{hijo_id}")
