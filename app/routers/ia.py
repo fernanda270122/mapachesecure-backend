@@ -33,19 +33,17 @@ def generar_desafios(data: GenerarDesafiosRequest):
             intereses=hijo.get("intereses"),
             personalidad=hijo.get("personalidad"),
         )
-        if "desafios" in resultado:
-            for d in resultado["desafios"]:
-                supabase.table("desafios").insert({
-                    "titulo": d["titulo"],
-                    "descripcion": d["descripcion"],
-                    "puntos": d.get("puntos", 50),
-                    "tipo": data.categoria,
-                    "dificultad": data.dificultad,
-                    "hijo_id": data.hijo_id,
-                }).execute()
         return resultado
     except HTTPException:
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al generar desafíos: {str(e)}")
+
+@router.post("/asignar")
+def asignar_desafio(desafio: dict):
+    try:
+        return supabase.table("desafios").insert(desafio).execute()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
 
