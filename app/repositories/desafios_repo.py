@@ -35,3 +35,9 @@ def get_pendientes_hijo(hijo_id: str):
         .execute()
         .data
     )
+
+def actualizar_estado_desafio(desafio_id: int, estado: bool):
+    # Asegúrate de que la variable 'supabase' esté accesible en este archivo
+    return supabase.table("desafios").update(
+        {"esta_activo": estado}
+    ).eq("id", desafio_id).execute()
