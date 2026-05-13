@@ -58,3 +58,24 @@ def desactivar_bloqueo(bloqueo_id: str, current_user=Depends(get_current_user)):
 def eliminar_bloqueo(bloqueo_id: str, current_user=Depends(get_current_user)):
     supabase.table("bloqueos_programados").delete().eq("id", bloqueo_id).execute()
     return {"mensaje": "Bloqueo eliminado"}
+
+
+@router.get("/{hijo_id}/apps-instante")
+def obtener_apps_bloqueadas_instante(hijo_id: str, current_user=Depends(get_current_user)):
+    """
+    Este endpoint lo usará el Guardián en Flutter para saber qué apps 
+    cerrar inmediatamente según la tabla 'apps_bloqueadas'.
+    """
+    try:
+        # Consultamos la tabla que me mostraste en la foto
+        result = supabase.table("apps_bloqueadas") \
+            .select("package_name") \
+            .eq("hijo_id", hijo_id) \
+            .execute()
+        
+        # Devolvemos solo la lista de nombres de paquetes
+        # Ejemplo: ["com.netflix.mediaclient", "com.instagram.android"]
+        return [item['package_name'] for item in result.data]
+    
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error al obtener apps: {str(e)}")
