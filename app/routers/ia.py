@@ -1,11 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-from typing import Literal, Optional
+from typing import Literal
 from app.dependencies import get_current_user
 from app.services import ia_service
 from app.repositories import usuarios_repo
-
-from app.database import supabase
 
 class GenerarDesafiosRequest(BaseModel):
     categoria: Literal["cognitiva", "fisica", "hogar"]
@@ -33,19 +31,34 @@ def generar_desafios(data: GenerarDesafiosRequest):
             intereses=hijo.get("intereses"),
             personalidad=hijo.get("personalidad"),
         )
-        if "desafios" in resultado:
-            for d in resultado["desafios"]:
-                supabase.table("desafios").insert({
-                    "titulo": d["titulo"],
-                    "descripcion": d["descripcion"],
-                    "puntos": d.get("puntos", 50),
-                    "tipo": data.categoria,
-                    "dificultad": data.dificultad,
-                    "hijo_id": data.hijo_id,
-                }).execute()
         return resultado
     except HTTPException:
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al generar desafíos: {str(e)}")
 
+class AsignarDesafioRequest(BaseModel):
+      titulo: str
+      descripcion: str
+      puntos: int
+      tipo: str
+      dificultad: str
+      hijo_id: str
+      esta_activo: bool = False
+      
+@router.post("/asignar", dependencies=[Depends(get_current_user)])
+def asignar_desafio(data: AsignarDesafioRequest):
+    try:
+        from app.repositories import desafios_repo
+        resultado = desafios_repo.insertar({
+            "titulo": data.titulo,
+            "descripcion": data.descripcion,
+            "puntos": data.puntos,
+            "tipo": data.tipo,
+            "dificultad": data.dificultad,
+            "hijo_id": data.hijo_id,
+            "esta_activo": data.esta_activo,
+        })
+        return {"mensaje": "Desafío asignado correctamente", "data": resultado}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

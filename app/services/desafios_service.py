@@ -95,3 +95,8 @@ def obtener_pendientes(padre_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
     
+def actualizar_estado(desafio_id, esta_activo: bool):
+      try:
+          return desafios_repo.actualizar_estado(desafio_id, esta_activo)
+      except Exception as e:
+          raise HTTPException(status_code=500, detail=str(e))

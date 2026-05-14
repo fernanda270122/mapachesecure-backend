@@ -4,6 +4,10 @@ from typing import Optional
 from app.services import desafios_service
 from app.dependencies import get_current_user
 
+class ActualizarEstadoRequest(BaseModel):
+      id: str
+      esta_activo: bool
+      
 router = APIRouter(prefix="/desafios", tags=["Desafios"])
 
 
@@ -39,3 +43,7 @@ def validar_desafio(desafio_completado_id: str, aprobado: bool):
 @router.get("/pendientes/{padre_id}", dependencies=[Depends(get_current_user)])
 def obtener_pendientes(padre_id: str):
     return desafios_service.obtener_pendientes(padre_id)
+
+@router.post("/actualizar_estado", dependencies=[Depends(get_current_user)])
+def actualizar_estado(data: ActualizarEstadoRequest):
+    return desafios_service.actualizar_estado(data.id, data.esta_activo)
