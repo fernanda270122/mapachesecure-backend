@@ -35,7 +35,7 @@ def get_pendientes_hijo(hijo_id: str):
         .data
     )
 
-def actualizar_estado(desafio_id, esta_activo: bool):
+def actualizar_estado_desafio(desafio_id, esta_activo: bool):
     return supabase.table("desafios").update({"esta_activo": esta_activo}).eq("id", desafio_id).execute().data
 
 def insertar(datos: dict):
