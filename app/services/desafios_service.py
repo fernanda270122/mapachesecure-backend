@@ -15,36 +15,30 @@ def obtener_por_tipo(tipo: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 def completar_desafio(data):
-    try:
-        desafio = desafios_repo.get_by_id(data.desafio_id)
-        if not desafio:
-            raise HTTPException(status_code=404, detail="Desafío no encontrado")
+      try:
+          desafio = desafios_repo.get_by_id(data.desafio_id)
+          if not desafio:
+              raise HTTPException(status_code=404, detail="Desafío no encontrado")
 
-        puntos = desafio[0]["puntos"]
-        requiere_foto = desafio[0]["requiere_foto"]
+          registro = {
+              "hijo_id": data.hijo_id,
+              "desafio_id": data.desafio_id,
+              "foto_url": data.foto_url,
+              "validado": False,
+              "puntos_otorgados": 0
+          }
 
-        if requiere_foto and not data.foto_url:
-            return {"mensaje": "Este desafío requiere foto como evidencia", "validado": False, "puntos_otorgados": 0}
-
-        registro = {
-            "hijo_id": data.hijo_id,
-            "desafio_id": data.desafio_id,
-            "foto_url": data.foto_url,
-            "validado": not requiere_foto,
-            "puntos_otorgados": puntos if not requiere_foto else 0
-        }
-
-        result = desafios_repo.registrar_completado(registro)
-        return {
-            "mensaje": "¡Desafío completado! 🦝",
-            "validado": not requiere_foto,
-            "puntos_otorgados": puntos if not requiere_foto else 0,
-            "data": result
-        }
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+          result = desafios_repo.registrar_completado(registro)
+          return {
+              "mensaje": "¡Desafío enviado al jefe! 🦝" ,
+              "validado": False,
+              "puntos_otorgados": 0,
+              "data": result
+          }
+      except HTTPException:
+          raise
+      except Exception as e:
+          raise HTTPException(status_code=500, detail=str(e))
 
 def obtener_completados(hijo_id: str):
     try:
@@ -83,17 +77,23 @@ def validar_desafio(desafio_completado_id: str, aprobado: bool):
         raise HTTPException(status_code=500, detail=str(e))
 
 def obtener_pendientes(padre_id: str):
-    try:
-        hijos = usuarios_repo.get_hijos(padre_id)
-        if not hijos:
-            return []
+      try:
+          hijos = usuarios_repo.get_hijos(padre_id)
+          if not hijos:
+              return []
 
-        pendientes = []
-        for hijo in hijos:
-            pendientes.extend(desafios_repo.get_pendientes_hijo(hijo["id"]))
-        return pendientes
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+          pendientes = []
+          for hijo in hijos:
+              rows = desafios_repo.get_pendientes_hijo(hijo["id"])
+              for row in rows:
+                  desafio = desafios_repo.get_by_id(row["desafio_id"])
+                  row["titulo"] = desafio[0]["titulo"] if desafio else "Desafío"
+                  row["hijo_nombre"] = hijo["nombre"]
+                  row["url_evidencia"] = row.get("foto_url")
+                  pendientes.append(row)
+          return pendientes
+      except Exception as e:
+          raise HTTPException(status_code=500, detail=str(e))
     
 def actualizar_estado(desafio_id, esta_activo: bool):
       try:

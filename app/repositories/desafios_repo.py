@@ -31,7 +31,6 @@ def get_pendientes_hijo(hijo_id: str):
         .select("*")
         .eq("hijo_id", hijo_id)
         .eq("validado", False)
-        .neq("foto_url", None)
         .execute()
         .data
     )
