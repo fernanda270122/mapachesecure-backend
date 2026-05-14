@@ -38,14 +38,14 @@ def generar_desafios(data: GenerarDesafiosRequest):
         raise HTTPException(status_code=500, detail=f"Error al generar desafíos: {str(e)}")
 
 class AsignarDesafioRequest(BaseModel):
-      titulo: str
-      descripcion: str
-      puntos: int
-      tipo: str
-      dificultad: str
-      hijo_id: str
-      esta_activo: bool = False
-      
+    titulo: str
+    descripcion: str
+    puntos: int
+    tipo: str
+    dificultad: str
+    hijo_id: str
+    esta_activo: bool = False
+
 @router.post("/asignar", dependencies=[Depends(get_current_user)])
 def asignar_desafio(data: AsignarDesafioRequest):
     try:
