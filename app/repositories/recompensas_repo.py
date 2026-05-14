@@ -7,6 +7,9 @@ def get_by_hijo(hijo_id: str):
 def create(datos: dict):
     return supabase.table("recompensas").insert(datos).execute().data[0]
 
+def get_by_hijo_y_titulo(hijo_id: str, titulo: str):
+    return supabase.table("recompensas").select("*").eq("hijo_id", hijo_id).eq("titulo", titulo).execute().data
+
 def get_by_id(recompensa_id: str):
     return supabase.table("recompensas").select("*").eq("id", recompensa_id).execute().data
 

@@ -9,6 +9,9 @@ def obtener_recompensas(hijo_id: str):
 
 def crear_recompensa(recompensa):
     try:
+        existente = recompensas_repo.get_by_hijo_y_titulo(recompensa.hijo_id, recompensa.titulo)
+        if existente:
+            return {"mensaje": "Recompensa ya existe", "data": existente[0]}
         result = recompensas_repo.create(recompensa.model_dump())
         return {"mensaje": "Recompensa creada exitosamente 🎁", "data": result}
     except Exception as e:
