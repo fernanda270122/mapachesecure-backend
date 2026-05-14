@@ -12,7 +12,7 @@ class BloqueoCreate(BaseModel):
     tipo: str  # 'inmediato', 'horario', 'calendario'
     hora_inicio: Optional[str] = None
     hora_fin: Optional[str] = None
-    package_names: str
+    package_names: Optional[str] = ""
     dias_semana: Optional[List[int]] = None
     fechas: Optional[str] = None
 
