@@ -34,6 +34,7 @@ def crear_bloqueo(hijo_id: str, bloqueo: BloqueoCreate, current_user=Depends(get
             "hora_fin": bloqueo.hora_fin,
             "dias_semana": json.dumps(bloqueo.dias_semana) if bloqueo.dias_semana else None,
             "fechas": bloqueo.fechas if bloqueo.fechas else "",
+            "package_names": bloqueo.package_names,
             "activo": True,
         }
         result = supabase.table("bloqueos_programados").insert(data).execute()
