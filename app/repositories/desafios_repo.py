@@ -40,3 +40,6 @@ def actualizar_estado(desafio_id, esta_activo: bool):
 
 def insertar(datos: dict):
     return supabase.table("desafios").insert(datos).execute().data
+
+def delete_completado(completado_id: str):
+    return supabase.table("desafios_completados").delete().eq("id", completado_id).execute().data

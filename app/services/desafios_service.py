@@ -56,25 +56,26 @@ def obtener_puntos(hijo_id: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 def validar_desafio(desafio_completado_id: str, aprobado: bool):
-    try:
-        registro = desafios_repo.get_completado_by_id(desafio_completado_id)
-        if not registro:
-            raise HTTPException(status_code=404, detail="Desafio no encontrado")
+      try:
+          registro = desafios_repo.get_completado_by_id(desafio_completado_id)
+          if not registro:
+              raise HTTPException(status_code=404, detail="Desafio no encontrado")
 
-        dato = registro[0]
+          dato = registro[0]
 
-        if aprobado:
-            desafio = desafios_repo.get_by_id(dato["desafio_id"])
-            puntos = desafio[0]["puntos"]
-            desafios_repo.actualizar_completado(desafio_completado_id, {"validado": True, "puntos_otorgados": puntos})
-            return {"mensaje": "Desafio aprobado! Puntos otorgados", "puntos_otorgados": puntos}
-        else:
-            desafios_repo.actualizar_completado(desafio_completado_id, {"validado": False, "puntos_otorgados": 0})
-            return {"mensaje": "Desafio rechazado", "puntos_otorgados": 0}
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+          if aprobado:
+              desafio = desafios_repo.get_by_id(dato["desafio_id"])
+              puntos = desafio[0]["puntos"]
+              desafios_repo.actualizar_completado(desafio_completado_id, {"validado": True, "puntos_otorgados": puntos})
+              desafios_repo.actualizar_estado(dato["desafio_id"], False)
+              return {"mensaje": "Desafio aprobado! Puntos otorgados", "puntos_otorgados": puntos}
+          else:
+              desafios_repo.delete_completado(desafio_completado_id)
+              return {"mensaje": "Desafio rechazado, el hijo puede reintentarlo", "puntos_otorgados": 0}
+      except HTTPException:
+          raise
+      except Exception as e:
+          raise HTTPException(status_code=500, detail=str(e))
 
 def obtener_pendientes(padre_id: str):
       try:
