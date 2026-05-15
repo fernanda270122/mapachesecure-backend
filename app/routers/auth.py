@@ -3,7 +3,10 @@ from pydantic import BaseModel
 from app.services import auth_service
 from app.dependencies import get_current_user
 from typing import Optional
-
+import resend
+import os
+from fastapi import UploadFile, File, Form
+  
 router = APIRouter(prefix="/auth", tags=["Autenticacion"])
 
 
@@ -57,3 +60,13 @@ class CambiarPasswordRequest(BaseModel):
 @router.post("/cambiar-password")
 def cambiar_password(data: CambiarPasswordRequest):
     return auth_service.cambiar_password(data.access_token, data.nueva_password)
+
+#envio de fotos para confirmar identidad
+@router.post("/verificar-identidad")
+async def verificar_identidad(
+    user_id: str = Form(...),
+    nombre: str = Form(...),
+    email: str = Form(...),
+    foto: UploadFile = File(...)
+):
+    return await auth_service.verificar_identidad(user_id, nombre, email, foto)
