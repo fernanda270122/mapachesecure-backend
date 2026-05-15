@@ -3,7 +3,15 @@ from app.repositories import recompensas_repo, desafios_repo, catalogo_repo
 
 def obtener_recompensas(hijo_id: str):
     try:
-        return recompensas_repo.get_by_hijo(hijo_id)
+        data = recompensas_repo.get_by_hijo(hijo_id)
+        vistos = set()
+        unicos = []
+        for r in data:
+            titulo = r.get('titulo', '')
+            if titulo not in vistos:
+                vistos.add(titulo)
+                unicos.append(r)
+        return unicos
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
