@@ -83,7 +83,7 @@ def registro_hijo(data, padre_id: str):
                 <h2>¡Hola {data.nombre}!</h2>
                 <p>Tu cuenta en Raccu ya está lista.</p>
                 <p>Descarga la app en tu celular haciendo clic aquí:</p>
-                <a href="https://drive.google.com/uc?export=download&id=165E8JxUPEHuUICXvlcBvoFHlkjMreR8c"
+                <a href="https://drive.google.com/file/d/165E8JxUPEHuUICXvlcBvoFHlkjMreR8c/view?usp=sharing"
                     style="background:#6200EA;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">
                     Descargar Raccu
                 </a>
@@ -101,6 +101,8 @@ def registro_hijo(data, padre_id: str):
     except HTTPException:
         raise
     except Exception as e:
+        if '23505' in str(e) or 'already exists' in str(e):
+          raise HTTPException(status_code=400, detail="Este correo ya está registrado")
         raise HTTPException(status_code=500, detail=str(e))
     
 def recuperar_password(email: str):
