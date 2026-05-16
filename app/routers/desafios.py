@@ -63,3 +63,7 @@ def obtener_pendientes(padre_id: str):
 @router.post("/actualizar_estado", dependencies=[Depends(get_current_user)])
 def actualizar_estado(data: ActualizarEstadoRequest):
     return desafios_service.actualizar_estado(data.id, data.esta_activo)
+
+@router.delete("/{desafio_id}", dependencies=[Depends(get_current_user)])
+def eliminar_desafio(desafio_id: str):
+    return desafios_service.eliminar_desafio(desafio_id)

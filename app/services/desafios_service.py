@@ -97,7 +97,14 @@ def obtener_pendientes(padre_id: str):
           raise HTTPException(status_code=500, detail=str(e))
     
 def actualizar_estado(desafio_id, esta_activo: bool):
+      try:
+          return desafios_repo.actualizar_estado(desafio_id, esta_activo)
+      except Exception as e:
+          raise HTTPException(status_code=500, detail=str(e))
+
+def eliminar_desafio(desafio_id: str):
     try:
-        return desafios_repo.actualizar_estado_desafio(desafio_id, esta_activo)
+        desafios_repo.delete(desafio_id)
+        return {"mensaje": "Desafío eliminado exitosamente"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
