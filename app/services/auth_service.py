@@ -75,22 +75,25 @@ def registro_hijo(data, padre_id: str):
         }
         auth_repo.create_perfil(perfil)
         
-        resend.Emails.send({
-            "from": "onboarding@resend.dev",
-            "to": [data.email],
-            "subject": "¡Bienvenido a ! DRaccuescarga la app 🦝" ,
-            "html": f"""
-                <h2>¡Hola {data.nombre}!</h2>
-                <p>Tu cuenta en Raccu ya está lista.</p>
-                <p>Descarga la app en tu celular haciendo clic aquí:</p>
-                <a href="https://drive.google.com/file/d/165E8JxUPEHuUICXvlcBvoFHlkjMreR8c/view?usp=sharing"
-                    style="background:#6200EA;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">
-                    Descargar Raccu
-                </a>
-                <p>Una vez descargada, instálala y entra con tu correo y contraseña.</p>
-                <p>¡Nos vemos adentro! 🦝</p>
-            """
-        })
+        try:
+            resend.Emails.send({
+                "from": "onboarding@resend.dev",
+                "to": [data.email],
+                "subject": "¡Bienvenido a Raccu! Descarga la app 🦝" ,
+                "html": f"""
+                    <h2>¡Hola {data.nombre}!</h2>
+                    <p>Tu cuenta en Raccu ya está lista.</p>
+                    <p>Descarga la app en tu celular haciendo clic aquí:</p>
+                    <a href="https://drive.google.com/file/d/165E8JxUPEHuUICXvlcBvoFHlkjMreR8c/view?usp=sharing"
+                        style="background:#6200EA;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">
+                        Descargar Raccu
+                    </a>
+                    <p>Una vez descargada, instálala y entra con tu correo y contraseña.</p>
+                    <p>¡Nos vemos adentro! 🦝</p>
+                """
+            })
+        except Exception as email_error:
+            print(f"[REGISTRO_HIJO] Error al enviar email: {email_error}")
 
         return {
             "mensaje": "Hijo registrado exitosamente",
@@ -102,9 +105,9 @@ def registro_hijo(data, padre_id: str):
         raise
     except Exception as e:
         if '23505' in str(e) or 'already exists' in str(e):
-          raise HTTPException(status_code=400, detail="Este correo ya está registrado")
+            raise HTTPException(status_code=400, detail="Este correo ya está registrado")
         raise HTTPException(status_code=500, detail=str(e))
-    
+
 def recuperar_password(email: str):
     try:
         auth_repo.reset_password(email)
