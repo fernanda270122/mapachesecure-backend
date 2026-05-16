@@ -85,3 +85,10 @@ def eliminar_del_catalogo(catalogo_id: str, padre_id: str):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+    
+def actualizar_recompensa(recompensa_id: str, datos: dict):
+    try:
+        result = recompensas_repo.update(recompensa_id, datos)
+        return {"mensaje": "Recompensa actualizada exitosamente", "data": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
