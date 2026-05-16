@@ -24,3 +24,6 @@ def get_catalogo():
 
 def create_catalogo(datos: dict):
     return supabase.table("catalogo_recompensas").insert(datos).execute().data
+
+def update(recompensa_id: str, datos: dict):
+    return supabase.table("recompensas").update(datos).eq("id", recompensa_id).execute().data

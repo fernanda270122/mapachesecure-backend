@@ -23,6 +23,10 @@ class RecompensaCatalogo(BaseModel):
     puntos_sugeridos: int
     icono: str
 
+class RecompensaActualizar(BaseModel):
+      titulo: Optional[str] = None
+      costo_puntos: Optional[int] = None
+      disponible: Optional[bool] = None
 
 @router.get("/catalogo", dependencies=[Depends(get_current_user)])
 def obtener_catalogo():
@@ -51,3 +55,7 @@ def obtener_recompensas(hijo_id: str):
 @router.post("/", dependencies=[Depends(get_current_user)])
 def crear_recompensa(recompensa: RecompensaCrear):
     return recompensas_service.crear_recompensa(recompensa)
+
+@router.put("/{recompensa_id}", dependencies=[Depends(get_current_user)])
+def actualizar_recompensa(recompensa_id: str, datos: RecompensaActualizar):
+    return recompensas_service.actualizar_recompensa(recompensa_id, {k: v for k, v in datos.model_dump().items() if v is not None})
