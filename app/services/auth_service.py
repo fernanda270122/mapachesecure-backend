@@ -84,7 +84,7 @@ def registro_hijo(data, padre_id: str):
                     <h2>¡Hola {data.nombre}!</h2>
                     <p>Tu cuenta en Raccu ya está lista.</p>
                     <p>Descarga la app en tu celular haciendo clic aquí:</p>
-                    <a href="https://drive.google.com/file/d/165E8JxUPEHuUICXvlcBvoFHlkjMreR8c/view?usp=sharing"
+                    <a href="https://drive.google.com/uc?export=download&id=165E8JxUPEHuUICXvlcBvoFHlkjMreR8c"
                         style="background:#6200EA;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">
                         Descargar Raccu
                     </a>
@@ -160,4 +160,11 @@ async def verificar_identidad(user_id: str, nombre: str, email: str, foto):
           return {"mensaje": "Verificación enviada, pronto revisaremos tu solicitud."}
       except Exception as e:
           print(f"[VERIFICAR] ERROR: {str(e)}")
+          
           raise HTTPException(status_code=500, detail=str(e))
+def eliminar_usuario(usuario_id: str):
+    try:
+        usuarios_repo.delete(usuario_id)
+        return {"mensaje": "Usuario eliminado exitosamente"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
