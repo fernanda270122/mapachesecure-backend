@@ -74,6 +74,23 @@ def registro_hijo(data, padre_id: str):
             "edad": data.edad
         }
         auth_repo.create_perfil(perfil)
+        
+        resend.Emails.send({
+            "from": "onboarding@resend.dev",
+            "to": [data.email],
+            "subject": "¡Bienvenido a MapacheSecure! Descarga la app 🦝" ,
+            "html": f"""
+                <h2>¡Hola {data.nombre}!</h2>
+                <p>Tu cuenta en MapacheSecure ya está lista.</p>
+                <p>Descarga la app en tu celular haciendo clic aquí:</p>
+                <a href="https://drive.google.com/uc?export=download&id=165E8JxUPEHuUICXvlcBvoFHlkjMreR8c"
+                    style="background:#6200EA;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">
+                    Descargar MapacheSecure
+                </a>
+                <p>Una vez descargada, instálala y entra con tu correo y contraseña.</p>
+                <p>¡Nos vemos adentro! 🦝</p>
+            """
+        })
 
         return {
             "mensaje": "Hijo registrado exitosamente",
