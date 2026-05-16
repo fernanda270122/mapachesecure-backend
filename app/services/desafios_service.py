@@ -67,7 +67,7 @@ def validar_desafio(desafio_completado_id: str, aprobado: bool):
               desafio = desafios_repo.get_by_id(dato["desafio_id"])
               puntos = desafio[0]["puntos"]
               desafios_repo.actualizar_completado(desafio_completado_id, {"validado": True, "puntos_otorgados": puntos})
-              desafios_repo.actualizar_estado(dato["desafio_id"], False)
+              desafios_repo.delete(dato["desafio_id"])
               return {"mensaje": "Desafio aprobado! Puntos otorgados", "puntos_otorgados": puntos}
           else:
               desafios_repo.delete_completado(desafio_completado_id)
