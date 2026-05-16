@@ -101,3 +101,10 @@ def actualizar_estado(desafio_id, esta_activo: bool):
           return desafios_repo.actualizar_estado(desafio_id, esta_activo)
       except Exception as e:
           raise HTTPException(status_code=500, detail=str(e))
+
+def eliminar_desafio(desafio_id: str):
+    try:
+        desafios_repo.delete(desafio_id)
+        return {"mensaje": "Desafío eliminado exitosamente"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

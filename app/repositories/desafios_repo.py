@@ -43,3 +43,6 @@ def insertar(datos: dict):
 
 def delete_completado(completado_id: str):
     return supabase.table("desafios_completados").delete().eq("id", completado_id).execute().data
+
+def delete(desafio_id: str):
+    return supabase.table("desafios").delete().eq("id", desafio_id).execute().data
