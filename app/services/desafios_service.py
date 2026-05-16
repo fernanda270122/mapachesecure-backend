@@ -29,6 +29,7 @@ def completar_desafio(data):
           }
 
           result = desafios_repo.registrar_completado(registro)
+          desafios_repo.actualizar_estado(data.desafio_id, False)
           return {
               "mensaje": "¡Desafío enviado al jefe! 🦝" ,
               "validado": False,
@@ -71,6 +72,7 @@ def validar_desafio(desafio_completado_id: str, aprobado: bool):
               return {"mensaje": "Desafio aprobado! Puntos otorgados", "puntos_otorgados": puntos}
           else:
               desafios_repo.delete_completado(desafio_completado_id)
+              desafios_repo.actualizar_estado(dato["desafio_id"], True)
               return {"mensaje": "Desafio rechazado, el hijo puede reintentarlo", "puntos_otorgados": 0}
       except HTTPException:
           raise
