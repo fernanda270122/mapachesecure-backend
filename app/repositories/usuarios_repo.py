@@ -15,3 +15,6 @@ def get_hijos(padre_id: str):
 
 def update(usuario_id: str, datos: dict):
     return supabase.table("usuarios").update(datos).eq("id", usuario_id).execute().data
+
+def delete(usuario_id: str):
+      return supabase.table("usuarios").delete().eq("id", usuario_id).execute().data
