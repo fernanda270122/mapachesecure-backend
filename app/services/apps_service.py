@@ -67,3 +67,10 @@ def obtener_estado(hijo_id: str):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+def actualizar_app_bloqueada(app_id: str, datos: dict):
+    try:
+        result = apps_repo.update(app_id, datos)
+        return {"mensaje": "App actualizada exitosamente", "data": result}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

@@ -12,6 +12,13 @@ class AppBloqueadaCrear(BaseModel):
     nombre_app: str
     requiere_desafio: bool = True
 
+class AppBloqueadaActualizar(BaseModel):
+      requiere_desafio: bool
+
+@router.put("/{app_id}", dependencies=[Depends(get_current_user)])
+def actualizar_app_bloqueada(app_id: str, app: AppBloqueadaActualizar):
+    return apps_service.actualizar_app_bloqueada(app_id, app.model_dump())
+
 
 @router.get("/{hijo_id}", dependencies=[Depends(get_current_user)])
 def obtener_apps_bloqueadas(hijo_id: str):

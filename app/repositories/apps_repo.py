@@ -34,3 +34,6 @@ def crear_uso(datos: dict):
 
 def actualizar_uso(uso_id: str, minutos: int):
     return supabase.table("uso_diario").update({"minutos_usados": minutos}).eq("id", uso_id).execute().data
+
+def update(app_id: str, datos: dict):
+    return supabase.table("apps_bloqueadas").update(datos).eq("id", app_id).execute().data
