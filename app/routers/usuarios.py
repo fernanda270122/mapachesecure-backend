@@ -37,3 +37,6 @@ class ConfiguracionHijo(BaseModel):
 @router.put("/{hijo_id}/configuracion", dependencies=[Depends(get_current_user)])
 def configurar_hijo(hijo_id: str, config: ConfiguracionHijo):
     return usuarios_service.configurar_hijo(hijo_id, config)
+@router.delete("/{usuario_id}", dependencies=[Depends(get_current_user)])
+def eliminar_usuario(usuario_id: str):
+    return usuarios_service.eliminar_usuario(usuario_id)
