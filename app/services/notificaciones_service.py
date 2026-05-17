@@ -30,7 +30,7 @@ def enviar_notificacion_padre(hijo_id: str, nombre_app: str):
         _init_firebase()
         message = messaging.Message(
             notification=messaging.Notification(
-                title="MapacheSecure - App bloqueada",
+                title="Raccu - App bloqueada",
                 body=f"{hijo['nombre']} intentó abrir {nombre_app}",
             ),
             data={"hijo_id": hijo_id, "app": nombre_app},
