@@ -43,11 +43,10 @@ def canjear_recompensa(data):
                 "puntos_necesarios": costo
             }
 
-        recompensas_repo.registrar_canje({"hijo_id": data.hijo_id, "recompensa_id": data.recompensa_id})
+        recompensas_repo.registrar_canje({"hijo_id": data.hijo_id, "recompensa_id": data.recompensa_id, "estado": "pendiente"})
         return {
-            "mensaje": "¡Recompensa canjeada exitosamente! 🦝🎉",
-            "puntos_gastados": costo,
-            "puntos_restantes": puntos_actuales - costo
+            "mensaje": "¡Solicitud enviada! El padre debe aprobarla 🦝" ,
+            "pendiente": True
         }
     except HTTPException:
         raise
