@@ -27,3 +27,6 @@ def create_catalogo(datos: dict):
 
 def update(recompensa_id: str, datos: dict):
     return supabase.table("recompensas").update(datos).eq("id", recompensa_id).execute().data
+
+def deshabilitar_todas(hijo_id: str):
+    supabase.table("recompensas").update({"disponible": False}).eq("hijo_id", hijo_id).execute()
