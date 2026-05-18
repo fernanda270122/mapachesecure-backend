@@ -44,6 +44,10 @@ async def actualizar_estado(datos: dict):
         # Importante tener el HTTPException importado arriba
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.get("/hijo/{hijo_id}", dependencies=[Depends(get_current_user)])
+def obtener_por_hijo(hijo_id: str):
+    return desafios_repo.get_by_hijo(hijo_id)
+
 @router.get("/completados/{hijo_id}", dependencies=[Depends(get_current_user)])
 def obtener_completados(hijo_id: str):
     return desafios_service.obtener_completados(hijo_id)
