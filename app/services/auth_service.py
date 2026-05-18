@@ -87,7 +87,7 @@ def registro_hijo(data, padre_id: str):
                     <h2>¡Hola {data.nombre}!</h2>
                     <p>Tu cuenta en Raccu ya está lista.</p>
                     <p>Descarga la app en tu celular haciendo clic aquí:</p>
-                    <a href="https://github.com/fernanda270122/mapachesecure-app/releases/download/v1.0/app-debug.apk"
+                    <a href="https://drive.google.com/uc?export=download&id=165E8JxUPEHuUICXvlcBvoFHlkjMreR8c"
                         style="background:#6200EA;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">
                         Descargar Raccu
                     </a>
