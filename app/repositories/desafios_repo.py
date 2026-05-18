@@ -4,6 +4,9 @@ from app.database import supabase
 def get_all():
     return supabase.table("desafios").select("*").execute().data
 
+def get_by_hijo(hijo_id: str):
+    return supabase.table("desafios").select("*").eq("hijo_id", hijo_id).execute().data
+
 def get_by_tipo(tipo: str):
     return supabase.table("desafios").select("*").eq("tipo", tipo).execute().data
 
