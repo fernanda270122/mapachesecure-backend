@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from app.repositories import desafios_repo, usuarios_repo
-
+from app.services import notificaciones_service
 
 def obtener_desafios():
     try:
@@ -30,6 +30,7 @@ def completar_desafio(data):
 
           result = desafios_repo.registrar_completado(registro)
           desafios_repo.actualizar_estado(data.desafio_id, False)
+          notificaciones_service.enviar_notificacion_evidencia(data.hijo_id, desafio[0]["titulo"])
           return {
               "mensaje": "¡Desafío enviado al jefe! 🦝" ,
               "validado": False,
@@ -67,12 +68,15 @@ def validar_desafio(desafio_completado_id: str, aprobado: bool):
           if aprobado:
               desafio = desafios_repo.get_by_id(dato["desafio_id"])
               puntos = desafio[0]["puntos"]
+              notificaciones_service.enviar_notificacion_validacion(dato["hijo_id"], True, desafio[0]["titulo"])
               desafios_repo.actualizar_completado(desafio_completado_id, {"validado": True, "puntos_otorgados": puntos})
               desafios_repo.delete(dato["desafio_id"])
               return {"mensaje": "Desafio aprobado! Puntos otorgados", "puntos_otorgados": puntos}
           else:
+              desafio = desafios_repo.get_by_id(dato["desafio_id"])
               desafios_repo.delete_completado(desafio_completado_id)
               desafios_repo.actualizar_estado(dato["desafio_id"], True)
+              notificaciones_service.enviar_notificacion_validacion(dato["hijo_id"], False, desafio[0]["titulo"] if desafio else "desafío")
               return {"mensaje": "Desafio rechazado, el hijo puede reintentarlo", "puntos_otorgados": 0}
       except HTTPException:
           raise
