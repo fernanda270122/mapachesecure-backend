@@ -30,20 +30,6 @@ def obtener_por_tipo(tipo: str):
 def completar_desafio(data: DesafioCompletar):
     return desafios_service.completar_desafio(data)
 
-@router.post("/actualizar_estado")
-async def actualizar_estado(datos: dict):
-    try:
-        desafio_id = datos.get("id")
-        nuevo_estado = datos.get("esta_activo")
-        
-        # Llamamos a la función del repo
-        resultado = desafios_repo.actualizar_estado_desafio(desafio_id, nuevo_estado)
-        
-        return {"status": "success", "data": resultado.data}
-    except Exception as e:
-        # Importante tener el HTTPException importado arriba
-        raise HTTPException(status_code=500, detail=str(e))
-
 @router.get("/hijo/{hijo_id}", dependencies=[Depends(get_current_user)])
 def obtener_por_hijo(hijo_id: str):
     return desafios_repo.get_by_hijo(hijo_id)
