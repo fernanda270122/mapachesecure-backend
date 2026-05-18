@@ -1,5 +1,7 @@
 from fastapi import HTTPException
 from app.repositories import auth_repo
+import resend
+import os
 
 
 def registro(data):
@@ -76,6 +78,7 @@ def registro_hijo(data, padre_id: str):
         auth_repo.create_perfil(perfil)
         
         try:
+            resend.api_key = os.getenv("RESEND_API_KEY")
             resend.Emails.send({
                 "from": "onboarding@resend.dev",
                 "to": [data.email],
@@ -123,8 +126,6 @@ def cambiar_password(access_token: str, nueva_password: str):
         raise HTTPException(status_code=500, detail=str(e))
     
 #ENVIO DE IMAGENES PARA CONFIRMAR IDENTIDAD
-import resend
-import os
 from app.database import supabase
 
 async def verificar_identidad(user_id: str, nombre: str, email: str, foto):
