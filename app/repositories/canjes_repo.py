@@ -5,7 +5,7 @@ def obtener_canjes_pendientes(padre_id: str):
     hijo_ids = [h["id"] for h in hijos.data]
     if not hijo_ids:
         return []
-    result = supabase.table("canjes").select("*, recompensas(titulo), usuarios(nombre)").in_("hijo_id", hijo_ids).eq("estado", "pendiente").execute()
+    result = supabase.table("canjes").select("*, recompensas(titulo), usuarios(nombre, sexo)").in_("hijo_id", hijo_ids).eq("estado", "pendiente").execute()
     return result.data
 
 def tiene_pendiente(hijo_id: str) -> bool:
