@@ -1,29 +1,27 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
-from app.services.ia_service import generar_desafios
+from app.services.notificaciones_service import registrar_fcm_token, enviar_notificacion_login
+from app.dependencies import get_current_user
 
-router = APIRouter(prefix="/ia", tags=["IA"])
+router = APIRouter(prefix="/notificaciones", tags=["Notificaciones"])
 
-class SolicitudDesafios(BaseModel):
-    categoria: str
-    edad: int
-    dificultad: str
-    cantidad: int = 2
 
-@router.post("/generar-desafios")
-def generar(solicitud: SolicitudDesafios):
-    categorias_validas = ["cognitiva", "fisica", "hogar"]
-    dificultades_validas = ["facil", "medio", "dificil"]
+class TokenFCMRequest(BaseModel):
+    fcm_token: str
 
-    if solicitud.categoria not in categorias_validas:
-        raise HTTPException(status_code=400, detail=f"Categoría inválida. Usa: {categorias_validas}")
-    if solicitud.dificultad not in dificultades_validas:
-        raise HTTPException(status_code=400, detail=f"Dificultad inválida. Usa: {dificultades_validas}")
 
-    resultado = generar_desafios(
-        categoria=solicitud.categoria,
-        edad=solicitud.edad,
-        dificultad=solicitud.dificultad,
-        cantidad=solicitud.cantidad
-    )
-    return resultado
+class LoginNotificacionRequest(BaseModel):
+    nombre: str
+    rol: str
+
+
+@router.post("/token")
+def guardar_token(body: TokenFCMRequest, usuario_id: str = Depends(get_current_user)):
+    """Guarda el token FCM del dispositivo del usuario para poder enviarle notificaciones push."""
+    return registrar_fcm_token(usuario_id, body.fcm_token)
+
+
+@router.post("/login")
+def notificar_login(body: LoginNotificacionRequest, usuario_id: str = Depends(get_current_user)):
+    """Envía una notificación push al dispositivo del usuario confirmando el inicio de sesión."""
+    return enviar_notificacion_login(usuario_id, body.nombre, body.rol)
