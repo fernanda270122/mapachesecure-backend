@@ -6,8 +6,16 @@ import os
 
 def _init_firebase():
     if not firebase_admin._apps:
-        cred_path = os.getenv("FIREBASE_CREDENTIALS_PATH", "firebase-credentials.json")
-        cred = credentials.Certificate(cred_path)
+        # Opción 1: JSON completo en variable de entorno (para Render)
+        cred_json = os.getenv("FIREBASE_CREDENTIALS_JSON")
+        if cred_json:
+            import json
+            cred_dict = json.loads(cred_json)
+            cred = credentials.Certificate(cred_dict)
+        else:
+            # Opción 2: ruta al archivo local (para desarrollo)
+            cred_path = os.getenv("FIREBASE_CREDENTIALS_PATH", "firebase-credentials.json")
+            cred = credentials.Certificate(cred_path)
         firebase_admin.initialize_app(cred)
 
 def registrar_fcm_token(usuario_id: str, fcm_token: str):
