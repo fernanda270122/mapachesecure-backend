@@ -25,6 +25,28 @@ def registrar_fcm_token(usuario_id: str, fcm_token: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+def enviar_notificacion_login(usuario_id: str, nombre: str, rol: str):
+    """Envía una notificación push al dispositivo del usuario al iniciar sesión."""
+    try:
+        usuario = supabase.table("usuarios").select("fcm_token").eq("id", usuario_id).single().execute().data
+        if not usuario or not usuario.get("fcm_token"):
+            return {"mensaje": "No hay token FCM registrado para este usuario"}
+        rol_texto = "Padre" if rol == "padre" else "Hijo"
+        _init_firebase()
+        message = messaging.Message(
+            notification=messaging.Notification(
+                title="Sesión iniciada — Raccu",
+                body=f"Bienvenido, {nombre} ({rol_texto})",
+            ),
+            data={"tipo": "login", "usuario_id": usuario_id, "rol": rol},
+            token=usuario["fcm_token"],
+        )
+        messaging.send(message)
+        return {"mensaje": "Notificación de login enviada correctamente"}
+    except Exception as e:
+        return {"mensaje": f"Login exitoso (notificación no enviada: {str(e)})"}
+
+
 def enviar_notificacion_padre(hijo_id: str, nombre_app: str):
     try:
         hijo = supabase.table("usuarios").select("nombre, padre_id").eq("id", hijo_id).single().execute().data
