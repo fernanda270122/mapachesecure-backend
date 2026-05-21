@@ -44,6 +44,13 @@ class TipoAvatarUpdate(BaseModel):
 @router.put("/{usuario_id}/tipo-avatar", dependencies=[Depends(get_current_user)])
 def actualizar_tipo_avatar(usuario_id: str, body: TipoAvatarUpdate):
     return usuarios_service.actualizar_tipo_avatar(usuario_id, body.tipo_avatar)
+
+class FotoPerfilUpdate(BaseModel):
+    foto_perfil: str
+
+@router.put("/{usuario_id}/foto-perfil", dependencies=[Depends(get_current_user)])
+def actualizar_foto_perfil(usuario_id: str, body: FotoPerfilUpdate):
+    return usuarios_service.actualizar_foto_perfil(usuario_id, body.foto_perfil)
 @router.delete("/{usuario_id}", dependencies=[Depends(get_current_user)])
 def eliminar_usuario(usuario_id: str):
     return usuarios_service.eliminar_usuario(usuario_id)

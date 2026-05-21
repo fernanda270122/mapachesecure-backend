@@ -51,3 +51,10 @@ def actualizar_tipo_avatar(usuario_id: str, tipo_avatar: str):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+def actualizar_foto_perfil(usuario_id: str, foto_perfil: str):
+    try:
+        result = usuarios_repo.update(usuario_id, {"foto_perfil": foto_perfil})
+        return {"mensaje": "Foto de perfil actualizada", "foto_perfil": foto_perfil}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
