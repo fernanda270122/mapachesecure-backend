@@ -39,3 +39,15 @@ def configurar_hijo(hijo_id: str, config):
         return {"mensaje": "Configuración actualizada", "data": result}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+def actualizar_tipo_avatar(usuario_id: str, tipo_avatar: str):
+    try:
+        avatares_validos = {'mago', 'dormilon', 'gamer', 'ninja', 'samuray', 'princes'}
+        if tipo_avatar not in avatares_validos:
+            raise HTTPException(status_code=400, detail="Avatar no válido")
+        result = usuarios_repo.update(usuario_id, {"tipo_avatar": tipo_avatar})
+        return {"mensaje": "Avatar actualizado", "tipo_avatar": tipo_avatar}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

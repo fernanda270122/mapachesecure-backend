@@ -31,12 +31,19 @@ def crear_usuario(usuario: UsuarioCrear):
 def obtener_hijos(padre_id: str):
     return usuarios_service.obtener_hijos(padre_id)
 
-class ConfiguracionHijo(BaseModel):                                                                                                                                                             
+class ConfiguracionHijo(BaseModel):
     tiempo_limite_minutos: int
-    
+
 @router.put("/{hijo_id}/configuracion", dependencies=[Depends(get_current_user)])
 def configurar_hijo(hijo_id: str, config: ConfiguracionHijo):
     return usuarios_service.configurar_hijo(hijo_id, config)
+
+class TipoAvatarUpdate(BaseModel):
+    tipo_avatar: str
+
+@router.put("/{usuario_id}/tipo-avatar", dependencies=[Depends(get_current_user)])
+def actualizar_tipo_avatar(usuario_id: str, body: TipoAvatarUpdate):
+    return usuarios_service.actualizar_tipo_avatar(usuario_id, body.tipo_avatar)
 @router.delete("/{usuario_id}", dependencies=[Depends(get_current_user)])
 def eliminar_usuario(usuario_id: str):
     return usuarios_service.eliminar_usuario(usuario_id)
