@@ -35,6 +35,7 @@ def login(data):
         return {
             "mensaje": "Login exitoso",
             "access_token": auth_response.session.access_token,
+            "refresh_token": auth_response.session.refresh_token,
             "user_id": auth_response.user.id,
             "perfil": perfil[0] if perfil else None
         }
@@ -42,6 +43,21 @@ def login(data):
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+def refresh_token(refresh_token_str: str):
+    try:
+        from app.database import supabase
+        auth_response = supabase.auth.refresh_session(refresh_token_str)
+        if not auth_response.session:
+            raise HTTPException(status_code=401, detail="Sesión inválida o expirada")
+        return {
+            "access_token": auth_response.session.access_token,
+            "refresh_token": auth_response.session.refresh_token,
+        }
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(status_code=401, detail="No se pudo renovar la sesión")
 
 def logout():
     try:

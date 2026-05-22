@@ -48,6 +48,13 @@ def vincular_hijo(hijo_id: str, padre_id: str):
 def registro_hijo(data: RegistroHijoRequest, current_user=Depends(get_current_user)):
     return auth_service.registro_hijo(data, current_user.id)
 
+class RefreshTokenRequest(BaseModel):
+    refresh_token: str
+
+@router.post("/refresh")
+def refresh(data: RefreshTokenRequest):
+    return auth_service.refresh_token(data.refresh_token)
+
 class RecuperarPasswordRequest(BaseModel):
     email: str
 @router.post("/recuperar-password")

@@ -70,7 +70,7 @@ def validar_desafio(desafio_completado_id: str, aprobado: bool):
               puntos = desafio[0]["puntos"]
               notificaciones_service.enviar_notificacion_validacion(dato["hijo_id"], True, desafio[0]["titulo"])
               desafios_repo.actualizar_completado(desafio_completado_id, {"validado": True, "puntos_otorgados": puntos})
-              desafios_repo.delete(dato["desafio_id"])
+              desafios_repo.actualizar_estado(dato["desafio_id"], False)
               return {"mensaje": "Desafio aprobado! Puntos otorgados", "puntos_otorgados": puntos}
           else:
               desafio = desafios_repo.get_by_id(dato["desafio_id"])
