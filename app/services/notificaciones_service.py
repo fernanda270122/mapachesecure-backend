@@ -6,15 +6,15 @@ import os
 
 def _init_firebase():
     if not firebase_admin._apps:
-        # Opción 1: JSON completo en variable de entorno (para Render)
-        cred_json = os.getenv("FIREBASE_CREDENTIALS_JSON")
-        if cred_json:
-            import json
+        import json
+        # Busca el JSON de credenciales en cualquiera de las dos variables
+        cred_json = os.getenv("FIREBASE_CREDENTIALS_JSON") or os.getenv("FIREBASE_CREDENTIALS_PATH")
+        if cred_json and cred_json.strip().startswith("{"):
             cred_dict = json.loads(cred_json)
             cred = credentials.Certificate(cred_dict)
         else:
-            # Opción 2: ruta al archivo local (para desarrollo)
-            cred_path = os.getenv("FIREBASE_CREDENTIALS_PATH", "firebase-credentials.json")
+            # Fallback: ruta a archivo local
+            cred_path = cred_json or "firebase-credentials.json"
             cred = credentials.Certificate(cred_path)
         firebase_admin.initialize_app(cred)
 
