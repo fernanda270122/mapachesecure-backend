@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException                                                                                                                                       
+from fastapi import APIRouter, Depends, HTTPException                    
 from pydantic import BaseModel
 from typing import Optional, List
 from app.dependencies import get_current_user
@@ -9,7 +9,7 @@ router = APIRouter(prefix="/bloqueos", tags=["bloqueos"])
 
 
 class BloqueoCreate(BaseModel):
-    tipo: str  # 'inmediato', 'horario', 'calendario'
+    tipo: str  # 'inmediato', 'horario', 'calendario', 'total'
     hora_inicio: Optional[str] = None
     hora_fin: Optional[str] = None
     package_names: Optional[str] = ""
@@ -18,14 +18,28 @@ class BloqueoCreate(BaseModel):
 
 @router.post("/{hijo_id}")
 def crear_bloqueo(hijo_id: str, bloqueo: BloqueoCreate, current_user=Depends(get_current_user)):
+    # Modificado para admitir 'total' y validar correctamente los horarios sin fallar
     if bloqueo.tipo in ("horario", "calendario"):
         if bloqueo.hora_inicio and bloqueo.hora_fin:
             from datetime import datetime
-            inicio = datetime.strptime(bloqueo.hora_inicio, "%H:%M")
-            fin = datetime.strptime(bloqueo.hora_fin, "%H:%M")
-            diferencia = (fin - inicio).seconds / 3600
-            if diferencia < 2:
-                raise HTTPException(status_code=400, detail="El bloqueo debe ser de mínimo 2 horas")
+            try:
+                inicio = datetime.strptime(bloqueo.hora_inicio, "%H:%M")
+                fin = datetime.strptime(bloqueo.hora_fin, "%H:%M")
+                
+                # 🌟 CORRECCIÓN DE LA VALIDACIÓN: Usamos total_seconds() y abs() 
+                # por si el rango cruza la medianoche (ej: 23:00 a 02:00)
+                diferencia_segundos = (fin - inicio).total_seconds()
+                
+                # Si cruza la medianoche, la diferencia dará negativa, la ajustamos sumando 1 día (86400 seg)
+                if diferencia_segundos < 0:
+                    diferencia_segundos += 86400
+                    
+                diferencia_horas = diferencia_segundos / 3600
+                
+                if diferencia_horas < 2:
+                    raise HTTPException(status_code=400, detail="El bloqueo debe ser de mínimo 2 horas")
+            except ValueError:
+                raise HTTPException(status_code=400, detail="Formato de hora inválido. Use HH:MM")
 
     try:
         data = {
@@ -33,6 +47,7 @@ def crear_bloqueo(hijo_id: str, bloqueo: BloqueoCreate, current_user=Depends(get
             "tipo": bloqueo.tipo,
             "hora_inicio": bloqueo.hora_inicio,
             "hora_fin": bloqueo.hora_fin,
+            # Guardamos la lista de días pura [1, 2, 3...] serializada exactamente como viene de Flutter
             "dias_semana": json.dumps(bloqueo.dias_semana) if bloqueo.dias_semana else None,
             "fechas": bloqueo.fechas if bloqueo.fechas else "",
             "package_names": bloqueo.package_names,
@@ -69,14 +84,11 @@ def obtener_apps_bloqueadas_instante(hijo_id: str, current_user=Depends(get_curr
     cerrar inmediatamente según la tabla 'apps_bloqueadas'.
     """
     try:
-        # Consultamos la tabla que me mostraste en la foto
         result = supabase.table("apps_bloqueadas") \
             .select("package_name") \
             .eq("hijo_id", hijo_id) \
             .execute()
         
-        # Devolvemos solo la lista de nombres de paquetes
-        # Ejemplo: ["com.netflix.mediaclient", "com.instagram.android"]
         return [item['package_name'] for item in result.data]
     
     except Exception as e:
