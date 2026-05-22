@@ -16,12 +16,12 @@ class LoginNotificacionRequest(BaseModel):
 
 
 @router.post("/token")
-def guardar_token(body: TokenFCMRequest, usuario_id: str = Depends(get_current_user)):
+def guardar_token(body: TokenFCMRequest, current_user=Depends(get_current_user)):
     """Guarda el token FCM del dispositivo del usuario para poder enviarle notificaciones push."""
-    return registrar_fcm_token(usuario_id, body.fcm_token)
+    return registrar_fcm_token(current_user.id, body.fcm_token)
 
 
 @router.post("/login")
-def notificar_login(body: LoginNotificacionRequest, usuario_id: str = Depends(get_current_user)):
+def notificar_login(body: LoginNotificacionRequest, current_user=Depends(get_current_user)):
     """Envía una notificación push al dispositivo del usuario confirmando el inicio de sesión."""
-    return enviar_notificacion_login(usuario_id, body.nombre, body.rol)
+    return enviar_notificacion_login(current_user.id, body.nombre, body.rol)
