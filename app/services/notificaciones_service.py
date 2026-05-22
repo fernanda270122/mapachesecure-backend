@@ -77,26 +77,30 @@ def enviar_notificacion_evidencia(hijo_id: str, desafio_titulo: str):
     try:
         hijo = supabase.table("usuarios").select("nombre, padre_id").eq("id", hijo_id).single().execute().data
         if not hijo or not hijo.get("padre_id"):
+            print(f"[FCM] Sin padre_id para hijo {hijo_id}")
             return
         padre = supabase.table("usuarios").select("fcm_token").eq("id", hijo["padre_id"]).single().execute().data
         if not padre or not padre.get("fcm_token"):
+            print(f"[FCM] Padre sin fcm_token para hijo {hijo_id}")
             return
         _init_firebase()
         message = messaging.Message(
             notification=messaging.Notification(
-                title="Nueva evidencia de desafío 🦝" ,
+                title="Nueva evidencia de desafío 🦝",
                 body=f"{hijo['nombre']} completó '{desafio_titulo}'. ¡Revisa la evidencia!",
             ),
             token=padre["fcm_token"],
         )
         messaging.send(message)
-    except Exception:
-        pass
+        print(f"[FCM] Notificación de evidencia enviada al padre de {hijo_id}")
+    except Exception as e:
+        print(f"[FCM] Error al enviar notificacion de evidencia: {e}")
 
 def enviar_notificacion_validacion(hijo_id: str, aprobado: bool, desafio_titulo: str):
     try:
         hijo = supabase.table("usuarios").select("fcm_token").eq("id", hijo_id).single().execute().data
         if not hijo or not hijo.get("fcm_token"):
+            print(f"[FCM] Hijo {hijo_id} sin fcm_token")
             return
         _init_firebase()
         titulo = "¡Desafío aprobado! 🎉" if aprobado else "Evidencia rechazada 💪"
@@ -110,5 +114,6 @@ def enviar_notificacion_validacion(hijo_id: str, aprobado: bool, desafio_titulo:
             token=hijo["fcm_token"],
         )
         messaging.send(message)
-    except Exception:
-        pass
+        print(f"[FCM] Notificación de validación enviada al hijo {hijo_id} (aprobado={aprobado})")
+    except Exception as e:
+        print(f"[FCM] Error al enviar notificacion de validacion: {e}")
