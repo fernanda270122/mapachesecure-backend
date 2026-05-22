@@ -24,5 +24,5 @@ app.include_router(canjes.router)
 def root():
     return {
         "mensaje": "🦝 MapacheSecure API funcionando correctamente",
-        "version": "1.1.3"
+        "version": "1.1.4"
     }
