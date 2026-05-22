@@ -18,28 +18,27 @@ class BloqueoCreate(BaseModel):
 
 @router.post("/{hijo_id}")
 def crear_bloqueo(hijo_id: str, bloqueo: BloqueoCreate, current_user=Depends(get_current_user)):
-    # Modificado para admitir 'total' y validar correctamente los horarios sin fallar
     if bloqueo.tipo in ("horario", "calendario"):
         if bloqueo.hora_inicio and bloqueo.hora_fin:
-            from datetime import datetime
             try:
-                inicio = datetime.strptime(bloqueo.hora_inicio, "%H:%M")
-                fin = datetime.strptime(bloqueo.hora_fin, "%H:%M")
+                # 🌟 SOLUCIÓN ULTRA SEGURA: Convertimos a minutos directos sin usar datetime.strptime
+                h_inicio, m_inicio = map(int, bloqueo.hora_inicio.split(":"))
+                h_fin, m_fin = map(int, bloqueo.hora_fin.split(":"))
                 
-                # 🌟 CORRECCIÓN DE LA VALIDACIÓN: Usamos total_seconds() y abs() 
-                # por si el rango cruza la medianoche (ej: 23:00 a 02:00)
-                diferencia_segundos = (fin - inicio).total_seconds()
+                minutos_inicio = h_inicio * 60 + m_inicio
+                minutos_fin = h_fin * 60 + m_fin
                 
-                # Si cruza la medianoche, la diferencia dará negativa, la ajustamos sumando 1 día (86400 seg)
-                if diferencia_segundos < 0:
-                    diferencia_segundos += 86400
-                    
-                diferencia_horas = diferencia_segundos / 3600
+                # Calcular la diferencia tomando en cuenta si pasa de la medianoche
+                diferencia_minutos = minutos_fin - minutos_inicio
+                if diferencia_minutos < 0:
+                    diferencia_minutos += 1440  # Sumamos los minutos de un día completo (24 * 60)
                 
-                if diferencia_horas < 2:
+                # Validamos si es menor a 2 horas (120 minutos)
+                if diferencia_minutos < 120:
                     raise HTTPException(status_code=400, detail="El bloqueo debe ser de mínimo 2 horas")
-            except ValueError:
-                raise HTTPException(status_code=400, detail="Formato de hora inválido. Use HH:MM")
+                    
+            except Exception:
+                raise HTTPException(status_code=400, detail="Formato de horarios inválido o corrupto")
 
     try:
         data = {
@@ -47,7 +46,6 @@ def crear_bloqueo(hijo_id: str, bloqueo: BloqueoCreate, current_user=Depends(get
             "tipo": bloqueo.tipo,
             "hora_inicio": bloqueo.hora_inicio,
             "hora_fin": bloqueo.hora_fin,
-            # Guardamos la lista de días pura [1, 2, 3...] serializada exactamente como viene de Flutter
             "dias_semana": json.dumps(bloqueo.dias_semana) if bloqueo.dias_semana else None,
             "fechas": bloqueo.fechas if bloqueo.fechas else "",
             "package_names": bloqueo.package_names,
