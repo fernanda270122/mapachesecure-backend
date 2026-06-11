@@ -79,7 +79,7 @@ def vincular_hijo(hijo_id: str, padre_id: str):
 
 def registro_hijo(data, padre_id: str):
     try:
-        auth_response = auth_repo.sign_up(data.email, data.password)
+        auth_response = auth_repo.admin_create_user(data.email, data.password)
         if not auth_response.user:
             raise HTTPException(status_code=400, detail="Error al crear cuenta del hijo")
 
