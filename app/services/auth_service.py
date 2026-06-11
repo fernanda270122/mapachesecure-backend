@@ -89,7 +89,11 @@ def registro_hijo(data, padre_id: str):
             "nombre": data.nombre,
             "rol": "hijo",
             "padre_id": padre_id,
-            "edad": data.edad
+            "edad": data.edad,
+            "sexo": data.sexo,
+            "nivel_escolar": data.nivel_escolar,
+            "personalidad": data.personalidad,
+            "intereses": data.intereses,
         }
         auth_repo.create_perfil(perfil)
         

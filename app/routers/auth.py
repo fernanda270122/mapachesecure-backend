@@ -20,11 +20,15 @@ class LoginRequest(BaseModel):
     email: str
     password: str
     
-class RegistroHijoRequest(BaseModel):                                                                                                                                                           
+class RegistroHijoRequest(BaseModel):
     nombre: str
     email: str
     password: str
     edad: Optional[int] = None
+    sexo: Optional[str] = None
+    nivel_escolar: Optional[str] = None
+    personalidad: Optional[str] = None
+    intereses: Optional[list] = None
 
 
 
