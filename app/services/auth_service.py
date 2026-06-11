@@ -23,6 +23,8 @@ def registro(data):
     except HTTPException:
         raise
     except Exception as e:
+        if 'rate limit' in str(e).lower() or '429' in str(e):
+            raise HTTPException(status_code=429, detail="Límite de correos alcanzado. Espera unos minutos e intenta de nuevo.")
         raise HTTPException(status_code=500, detail=str(e))
 
 def login(data):
@@ -127,9 +129,6 @@ def registro_hijo(data, padre_id: str):
     except HTTPException:
         raise
     except Exception as e:
-        import traceback
-        print(f"[REGISTRO_HIJO] ERROR: {type(e).__name__}: {str(e)}")
-        traceback.print_exc()
         if '23505' in str(e) or 'already exists' in str(e):
             raise HTTPException(status_code=400, detail="Este correo ya está registrado")
         raise HTTPException(status_code=500, detail=str(e))
