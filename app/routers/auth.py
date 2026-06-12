@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
-from app.services import auth_service, correos_service
+from app.services import auth_service
 from app.dependencies import get_current_user
 from typing import Optional
 import resend
@@ -58,11 +58,6 @@ class RefreshTokenRequest(BaseModel):
 @router.post("/refresh")
 def refresh(data: RefreshTokenRequest):
     return auth_service.refresh_token(data.refresh_token)
-
-@router.get("/cuota-correos")
-def cuota_correos():
-    """Estado de la cuota de correos de Supabase (capa gratuita): enviados en la última hora y límite detectado."""
-    return correos_service.estado_cuota()
 
 class RecuperarPasswordRequest(BaseModel):
     email: str
