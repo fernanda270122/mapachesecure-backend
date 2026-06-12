@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 from app.repositories import auth_repo
+from app.services import correos_service
 import resend
 import os
 
@@ -9,6 +10,8 @@ def registro(data):
         auth_response = auth_repo.sign_up(data.email, data.password)
         if not auth_response.user:
             raise HTTPException(status_code=400, detail="Error al crear usuario")
+
+        correos_service.registrar_envio("registro", data.email)
 
         perfil = {"id": auth_response.user.id, "email": data.email, "nombre": data.nombre, "rol": data.rol}
         auth_repo.create_perfil(perfil)
@@ -24,7 +27,13 @@ def registro(data):
         raise
     except Exception as e:
         if 'rate limit' in str(e).lower() or '429' in str(e):
-            raise HTTPException(status_code=429, detail="Límite de correos alcanzado. Espera unos minutos e intenta de nuevo.")
+            detalle = "Límite de correos de Supabase alcanzado."
+            # Solo el error de cuota de email sirve para medir el límite real
+            if 'email rate limit' in str(e).lower():
+                limite = correos_service.detectar_limite()
+                if limite:
+                    detalle = f"Límite de correos de Supabase alcanzado: {limite} por hora."
+            raise HTTPException(status_code=429, detail=f"{detalle} Espera a que se libere un cupo e intenta de nuevo.")
         raise HTTPException(status_code=500, detail=str(e))
 
 def login(data):
@@ -136,8 +145,16 @@ def registro_hijo(data, padre_id: str):
 def recuperar_password(email: str):
     try:
         auth_repo.reset_password(email)
+        correos_service.registrar_envio("reset", email)
         return{"mensaje": "Correo de recuperación enviado"}
     except Exception as e:
+        if 'rate limit' in str(e).lower() or '429' in str(e):
+            detalle = "Límite de correos de Supabase alcanzado."
+            if 'email rate limit' in str(e).lower():
+                limite = correos_service.detectar_limite()
+                if limite:
+                    detalle = f"Límite de correos de Supabase alcanzado: {limite} por hora."
+            raise HTTPException(status_code=429, detail=f"{detalle} Espera a que se libere un cupo e intenta de nuevo.")
         raise HTTPException(status_code=500, detail=str(e))
 
 def cambiar_password(access_token: str, nueva_password: str):
