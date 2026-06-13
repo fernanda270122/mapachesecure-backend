@@ -1,0 +1,48 @@
+PRUEBA DE CARGA — Raccu / MapacheSecure
+Fecha: 2026-06-12
+Herramienta: k6 v0.57.0
+Backend: https://mapachesecure-backend.onrender.com
+
+=== ESCENARIOS ===
+  flujo_normal : 5 VUs, 1m15s (calentamiento 15s + carga 40s)
+  registros    : 5 VUs, 40s
+
+=== CHECKS ===
+  ✓ setup login ok
+  ✓ desafios: servidor responde
+  ✓ puntos: servidor responde
+  ✓ verificar app: servidor responde
+  ✓ apps bloqueadas: servidor responde
+  ✓ registro: servidor responde
+  ✓ registro: rate limit activo (anti-spam)
+
+=== METRICAS ===
+  http_req_duration
+    avg    : 618.52ms
+    p(90)  : 777.59ms
+    p(95)  : 847.53ms
+    max    : 1.89s
+
+  { scenario:flujo_normal }
+    p(95)  : 851.14ms   PASA < 1000ms
+
+  { scenario:registros }
+    p(95)  : 657.75ms   PASA < 2000ms
+
+  http_req_failed (flujo_normal) : 2.77%  PASA < 5%
+  http_reqs total                : 283
+  throughput                     : 3.577 req/s
+  iterations                     : 119
+  vus_max                        : 10
+  duracion total                 : 1m19s
+
+=== HALLAZGOS ===
+  - El sistema soporta 5 usuarios concurrentes con p95 < 1000ms.
+  - La latencia base (~630ms avg) se debe a la red Render free tier + Supabase,
+    no a la logica de la aplicacion.
+  - Supabase free tier limita a 4 registros/hora (rate limit 429).
+    Comportamiento esperado — proteccion anti-spam activa.
+
+=== RESULTADO ===
+  flujo_normal PASA
+  registros    PASA
