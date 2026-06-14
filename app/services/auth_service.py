@@ -99,27 +99,6 @@ def registro_hijo(data, padre_id: str):
         }
         auth_repo.create_perfil(perfil)
         
-        try:
-            resend.api_key = os.getenv("RESEND_API_KEY")
-            resend.Emails.send({
-                "from": "onboarding@resend.dev",
-                "to": [data.email],
-                "subject": "¡Bienvenido a Raccu! Descarga la app 🦝" ,
-                "html": f"""
-                    <h2>¡Hola {data.nombre}!</h2>
-                    <p>Tu cuenta en Raccu ya está lista.</p>
-                    <p>Descarga la app en tu celular haciendo clic aquí:</p>
-                    <a href="https://drive.google.com/uc?export=download&id=165E8JxUPEHuUICXvlcBvoFHlkjMreR8c"
-                        style="background:#6200EA;color:white;padding:12px 24px;border-radius:8px;text-decoration:none;font-weight:bold;">
-                        Descargar Raccu
-                    </a>
-                    <p>Una vez descargada, instálala y entra con tu correo y contraseña.</p>
-                    <p>¡Nos vemos adentro! 🦝</p>
-                """
-            })
-        except Exception as email_error:
-            print(f"[REGISTRO_HIJO] Error al enviar email: {email_error}")
-
         return {
             "mensaje": "Hijo registrado exitosamente",
             "user_id": auth_response.user.id,
