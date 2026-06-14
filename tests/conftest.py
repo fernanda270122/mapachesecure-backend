@@ -7,7 +7,17 @@ de esa forma las pruebas corren en cualquier máquina sin secretos reales
 (los servicios externos están mockeados, nunca se llaman de verdad).
 """
 import os
+import sys
 from pathlib import Path
+from unittest.mock import MagicMock
+
+# Interceptar el módulo supabase antes de que app.database lo importe,
+# para que create_client no intente validar credenciales reales.
+_mock_supabase_client = MagicMock()
+_mock_supabase_module = MagicMock()
+_mock_supabase_module.create_client.return_value = _mock_supabase_client
+_mock_supabase_module.Client = MagicMock
+sys.modules.setdefault("supabase", _mock_supabase_module)
 
 from dotenv import load_dotenv
 
