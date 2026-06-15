@@ -1,7 +1,5 @@
 from fastapi import HTTPException
 from app.repositories import auth_repo
-import resend
-import os
 
 
 def registro(data):
@@ -98,7 +96,7 @@ def registro_hijo(data, padre_id: str):
             "intereses": data.intereses,
         }
         auth_repo.create_perfil(perfil)
-        
+
         return {
             "mensaje": "Hijo registrado exitosamente",
             "user_id": auth_response.user.id,
@@ -141,23 +139,6 @@ async def verificar_identidad(user_id: str, nombre: str, email: str, foto):
 
           foto_url = supabase.storage.from_("verificaciones").get_public_url(ruta)
           print(f"[VERIFICAR] URL pública: {foto_url}")
-
-          resend.api_key = os.getenv("RESEND_API_KEY")
-          print(f"[VERIFICAR] RESEND_API_KEY cargada: {'sí' if resend.api_key else 'NO'}")
-
-          resend.Emails.send({
-              "from": "onboarding@resend.dev",
-              "to": ["raccucavy@gmail.com"],
-              "subject": f"Verificación de identidad: {nombre}",
-              "html": f"""
-                  <h2>Nueva solicitud de verificación</h2>
-                  <p><b>Nombre:</b> {nombre}</p>
-                  <p><b>Email:</b> {email}</p>
-                  <p><b>User ID:</b> {user_id}</p>
-                  <p><a href="{foto_url}">Ver foto de identificación</a></p>
-              """
-          })
-          print(f"[VERIFICAR] Email enviado correctamente")
 
           return {"mensaje": "Verificación enviada, pronto revisaremos tu solicitud."}
       except Exception as e:

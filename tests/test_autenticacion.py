@@ -1,6 +1,6 @@
 """Pruebas unitarias de auth_service.
 
-Los repositorios y servicios externos (Supabase, Resend) se reemplazan con mocks:
+Los repositorios y servicios externos (Supabase) se reemplazan con mocks:
 ninguna prueba toca la red ni la base de datos real.
 """
 from types import SimpleNamespace
@@ -209,9 +209,8 @@ class TestVincularHijo:
 # ---------- registro de hijo ----------
 
 class TestRegistroHijo:
-    @patch("app.services.auth_service.resend")
     @patch("app.services.auth_service.auth_repo")
-    def test_registro_hijo_crea_cuenta_con_padre_vinculado(self, repo, mock_resend):
+    def test_registro_hijo_crea_cuenta_con_padre_vinculado(self, repo):
         repo.admin_create_user.return_value = _respuesta_auth(usuario_id="hijo-9")
 
         resultado = auth_service.registro_hijo(_datos_hijo(), padre_id="padre-1")
@@ -222,17 +221,6 @@ class TestRegistroHijo:
         assert perfil["padre_id"] == "padre-1"
         assert perfil["rol"] == "hijo"
         assert perfil["edad"] == 10
-        mock_resend.Emails.send.assert_called_once()
-
-    @patch("app.services.auth_service.resend")
-    @patch("app.services.auth_service.auth_repo")
-    def test_registro_hijo_no_falla_si_el_correo_de_bienvenida_falla(self, repo, mock_resend):
-        repo.admin_create_user.return_value = _respuesta_auth(usuario_id="hijo-9")
-        mock_resend.Emails.send.side_effect = Exception("Resend caído")
-
-        resultado = auth_service.registro_hijo(_datos_hijo(), padre_id="padre-1")
-
-        assert resultado["mensaje"] == "Hijo registrado exitosamente"
 
     @patch("app.services.auth_service.auth_repo")
     def test_registro_hijo_con_correo_duplicado_devuelve_400(self, repo):

@@ -25,6 +25,5 @@ load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 os.environ.setdefault("GROQ_API_KEY", "clave-de-prueba")
 os.environ.setdefault("GEMINI_API_KEY", "clave-de-prueba")
-os.environ.setdefault("RESEND_API_KEY", "clave-de-prueba")
 os.environ.setdefault("SUPABASE_URL", "https://prueba.supabase.co")
 os.environ.setdefault("SUPABASE_KEY", "clave-de-prueba")
