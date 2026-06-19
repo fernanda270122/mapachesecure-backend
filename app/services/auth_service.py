@@ -106,6 +106,7 @@ def registro_hijo(data, padre_id: str):
     except HTTPException:
         raise
     except Exception as e:
+        print(f"[REGISTRO_HIJO] ERROR: {type(e).__name__}: {str(e)}")
         if '23505' in str(e) or 'already exists' in str(e):
             raise HTTPException(status_code=400, detail="Este correo ya está registrado")
         raise HTTPException(status_code=500, detail=str(e))
