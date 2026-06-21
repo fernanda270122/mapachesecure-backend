@@ -8,4 +8,5 @@ anthropic==0.94.0
 firebase-admin==6.5.0 
 groq==0.28.0
 resend==2.10.0
-python-multipart==0.0.27
+python-multipart==0.0.32
+idna==3.18
