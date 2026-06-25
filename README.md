@@ -39,7 +39,7 @@ app/
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/<org>/mapachesecure-backend.git
+git clone https://github.com/fernanda270122/mapachesecure-backend.git
 cd mapachesecure-backend
 ```
 
