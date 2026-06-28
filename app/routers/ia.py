@@ -50,6 +50,10 @@ class AsignarDesafioRequest(BaseModel):
 def asignar_desafio(data: AsignarDesafioRequest):
     try:
         from app.repositories import desafios_repo
+        from app.database import supabase
+        existente = supabase.table("desafios").select("id").eq("titulo", data.titulo).eq("hijo_id", data.hijo_id).execute().data
+        if existente:
+            return {"mensaje": "Desafío ya existe", "data": existente[0]}
         resultado = desafios_repo.insertar({
             "titulo": data.titulo,
             "descripcion": data.descripcion,

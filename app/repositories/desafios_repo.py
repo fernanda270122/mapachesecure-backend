@@ -5,7 +5,15 @@ def get_all():
     return supabase.table("desafios").select("*").execute().data
 
 def get_by_hijo(hijo_id: str):
-    return supabase.table("desafios").select("*").eq("hijo_id", hijo_id).execute().data
+    data = supabase.table("desafios").select("*").eq("hijo_id", hijo_id).execute().data
+    seen = set()
+    unique = []
+    for d in data:
+        key = (d.get("titulo", ""), d.get("tipo", ""))
+        if key not in seen:
+            seen.add(key)
+            unique.append(d)
+    return unique
 
 def get_by_tipo(tipo: str):
     return supabase.table("desafios").select("*").eq("tipo", tipo).execute().data
