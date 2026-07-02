@@ -314,7 +314,7 @@ class TestDesafiosRepo:
 
     def test_get_by_hijo(self):
         m = _sb()
-        m.table.return_value.select.return_value.or_.return_value.execute.return_value.data = [{"id": "d1"}]
+        m.table.return_value.select.return_value.eq.return_value.execute.return_value.data = [{"id": "d1"}]
         with patch("app.repositories.desafios_repo.supabase", m):
             from app.repositories import desafios_repo
             result = desafios_repo.get_by_hijo("h1")
