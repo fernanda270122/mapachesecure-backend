@@ -1,6 +1,5 @@
 """Tests de integración para canjes, ia, notificaciones, bloqueos y actividad."""
 from unittest.mock import MagicMock, patch
-from fastapi import HTTPException
 from fastapi.testclient import TestClient
 from app.main import app
 from app.dependencies import get_current_user

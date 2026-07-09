@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, patch, call
+from unittest.mock import MagicMock, patch
 import pytest
 from fastapi import HTTPException
 
@@ -266,11 +266,10 @@ class TestInitFirebase:
 
     def test_inicializa_con_json_credentials(self):
         with patch("app.services.notificaciones_service.firebase_admin") as mock_fb, \
-             patch("app.services.notificaciones_service.credentials") as mock_creds, \
+             patch("app.services.notificaciones_service.credentials"), \
              patch("app.services.notificaciones_service.os.getenv") as mock_env:
             mock_fb._apps = {}
             mock_env.return_value = '{"type": "service_account", "project_id": "test"}'
-            import json
             with patch("json.loads", return_value={"type": "service_account"}):
                 from app.services.notificaciones_service import _init_firebase
                 _init_firebase()
