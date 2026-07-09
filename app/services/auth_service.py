@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 from app.repositories import auth_repo
+from app.database import supabase
 
 
 def registro(data):
@@ -126,8 +127,6 @@ def cambiar_password(access_token: str, nueva_password: str):
         raise HTTPException(status_code=500, detail=str(e))
     
 #ENVIO DE IMAGENES PARA CONFIRMAR IDENTIDAD
-from app.database import supabase
-
 async def verificar_identidad(user_id: str, nombre: str, email: str, foto):
       try:
           print(f"[VERIFICAR] Recibiendo foto para user_id={user_id}")
@@ -146,9 +145,3 @@ async def verificar_identidad(user_id: str, nombre: str, email: str, foto):
           print(f"[VERIFICAR] ERROR: {str(e)}")
           
           raise HTTPException(status_code=500, detail=str(e))
-def eliminar_usuario(usuario_id: str):
-    try:
-        usuarios_repo.delete(usuario_id)
-        return {"mensaje": "Usuario eliminado exitosamente"}
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))

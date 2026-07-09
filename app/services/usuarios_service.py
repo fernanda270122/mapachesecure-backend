@@ -45,7 +45,7 @@ def actualizar_tipo_avatar(usuario_id: str, tipo_avatar: str):
         avatares_validos = {'mago', 'dormilon', 'gamer', 'ninja', 'samuray', 'princes'}
         if tipo_avatar not in avatares_validos:
             raise HTTPException(status_code=400, detail="Avatar no válido")
-        result = usuarios_repo.update(usuario_id, {"tipo_avatar": tipo_avatar})
+        usuarios_repo.update(usuario_id, {"tipo_avatar": tipo_avatar})
         return {"mensaje": "Avatar actualizado", "tipo_avatar": tipo_avatar}
     except HTTPException:
         raise
@@ -54,7 +54,14 @@ def actualizar_tipo_avatar(usuario_id: str, tipo_avatar: str):
 
 def actualizar_foto_perfil(usuario_id: str, foto_perfil: str):
     try:
-        result = usuarios_repo.update(usuario_id, {"foto_perfil": foto_perfil})
+        usuarios_repo.update(usuario_id, {"foto_perfil": foto_perfil})
         return {"mensaje": "Foto de perfil actualizada", "foto_perfil": foto_perfil}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+def eliminar_usuario(usuario_id: str):
+    try:
+        usuarios_repo.delete(usuario_id)
+        return {"mensaje": "Usuario eliminado exitosamente"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
